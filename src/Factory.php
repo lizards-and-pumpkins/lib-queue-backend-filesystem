@@ -10,7 +10,13 @@ class Factory implements FactoryInterface
      * @var RepositoryInterface
      */
     private $repository;
-    
+
+    function __construct()
+    {
+        $defaultRepository = $this->getNewRepository();
+        $this->setRepository($defaultRepository);
+    }
+
     public function setRepository(RepositoryInterface $repository)
     {
         $this->repository = $repository;
