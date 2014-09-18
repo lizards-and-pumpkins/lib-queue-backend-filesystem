@@ -15,7 +15,9 @@ class NullAdapterTest extends BaseTestCase
     
     public function setUp()
     {
-        $this->adapter = new NullAdapter();
+        $stubBackendFactory = $this->getStubBackendFactory();
+        $stubBackendConfig = $this->getStubBackendConfig();
+        $this->adapter = new NullAdapter($stubBackendFactory, $stubBackendConfig);
     }
     
     public function testItReturnsAnEmptyStringForReceiveMessage()

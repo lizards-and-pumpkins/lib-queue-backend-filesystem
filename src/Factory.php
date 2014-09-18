@@ -100,7 +100,7 @@ class Factory implements FactoryInterface
      */
     public function getNewBackendConfig()
     {
-        return $this->getBackendFactory()->getBackendConfig();
+        return $this->getBackendFactory()->getNewBackendConfig();
     }
 
     /**

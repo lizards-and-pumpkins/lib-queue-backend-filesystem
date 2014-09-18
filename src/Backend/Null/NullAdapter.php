@@ -4,6 +4,8 @@
 namespace Brera\Lib\Queue\Backend\Null;
 
 use Brera\Lib\Queue\BackendAdapterInterface;
+use Brera\Lib\Queue\BackendConfigInterface;
+use Brera\Lib\Queue\BackendFactoryInterface;
 use Brera\Lib\Queue\ConsumerChannelInterface;
 use Brera\Lib\Queue\IncomingMessageInterface;
 use Brera\Lib\Queue\OutgoingMessageInterface;
@@ -11,6 +13,11 @@ use Brera\Lib\Queue\ProducerChannelInterface;
 
 class NullAdapter implements BackendAdapterInterface
 {
+    public function __construct(BackendFactoryInterface $factory, BackendConfigInterface $config)
+    {
+        // Purposely left empty for null adapter.
+    }
+
     public function initialize()
     {
         // Purposely left empty for null adapter.
