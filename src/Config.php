@@ -23,6 +23,4 @@ class Config implements ConfigInterface
     {
         $this->backendFactoryClass = $backendFactoryClassName;
     }
-
-
 } 
