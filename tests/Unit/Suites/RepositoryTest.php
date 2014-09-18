@@ -90,6 +90,7 @@ class RepositoryTest extends BaseTestCase
     public function testItReturnsABackendConfig()
     {
         $this->addStubBackendConfigToStubFactory($this->stubFactory);
+        $this->addStubBackendFactoryToStubFactory($this->stubFactory);
         $result = $this->repository->getBackendConfig();
         $this->assertInstanceOf('Brera\Lib\Queue\BackendConfigInterface', $result);
     }
@@ -97,6 +98,7 @@ class RepositoryTest extends BaseTestCase
     public function testItAlwaysReturnsTheSameBackendConfigInstance()
     {
         $this->addStubBackendConfigToStubFactory($this->stubFactory);
+        $this->addStubBackendFactoryToStubFactory($this->stubFactory);
         $result1 = $this->repository->getBackendConfig();
         $result2 = $this->repository->getBackendConfig();
         $this->assertSame($result1, $result2);

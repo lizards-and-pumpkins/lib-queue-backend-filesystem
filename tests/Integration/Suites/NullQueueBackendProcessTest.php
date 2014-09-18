@@ -2,6 +2,7 @@
 
 namespace Brera\Lib\Queue\Tests\Integration;
 
+use Brera\Lib\Queue\Backend\Null\NullConfig;
 use Brera\Lib\Queue\Factory;
 
 class BootstrapQueueTest extends \PHPUnit_Framework_TestCase
@@ -33,7 +34,7 @@ class BootstrapQueueTest extends \PHPUnit_Framework_TestCase
         $outgoingMessage = $producerChannel->createOutgoingMessage('test');
         $this->assertInstanceOf('Brera\Lib\Queue\OutgoingMessage', $outgoingMessage);
         
-        // Run sendMessage with each valid argument type
+        // Run sendMessage with each valid argument type (OutgoingMessage and string)
         $producerChannel->sendMessage($outgoingMessage);
         $producerChannel->sendMessage('test2');
         
@@ -42,5 +43,14 @@ class BootstrapQueueTest extends \PHPUnit_Framework_TestCase
         
         $incomingMessage = $consumerChannel->receiveMessage();
         $this->assertInstanceOf('Brera\Lib\Queue\IncomingMessage', $incomingMessage);
+    }
+    
+    public function testTheSoleBackendConfigInstanceIsSetOnTheBackendFactory()
+    {
+        /** @var NullConfig $backendConfig */
+        $backendConfig = $this->factory->getSoleBackendConfigInstance();
+        $backendFactory = $this->factory->getSoleBackendFactoryInstance();
+        
+        $this->assertAttributeSame($backendConfig, 'configuredBackendConfigInstance', $backendFactory);
     }
 } 

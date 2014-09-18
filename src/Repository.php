@@ -51,7 +51,6 @@ class Repository implements RepositoryInterface
     {
         if (! isset($this->backendFactory)) {
             $this->backendFactory = $this->factory->getNewBackendFactory();
-            $this->backendFactory->setConfiguredBackendConfigInstance($this->getBackendConfig());
         }
         return $this->backendFactory;
     }
@@ -74,6 +73,7 @@ class Repository implements RepositoryInterface
     {
         if (! isset($this->backendConfig)) {
             $this->backendConfig = $this->factory->getNewBackendConfig();
+            $this->getBackendFactory()->setConfiguredBackendConfigInstance($this->backendConfig);
         }
         return $this->backendConfig;
     }
