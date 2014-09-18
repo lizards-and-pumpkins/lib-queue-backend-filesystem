@@ -32,6 +32,13 @@ class ProducerChannelTest extends BaseTestCase
         $this->channel = new ProducerChannel($this->stubFactory, $this->stubBackendAdapter, $channelName);
     }
     
+    public function testItInitializesAProducerChannelOnTheBackendAdapter()
+    {
+        $this->stubBackendAdapter->expects($this->once())
+            ->method('initializeProducerChannel');
+        $this->channel = new ProducerChannel($this->stubFactory, $this->stubBackendAdapter, 'test');
+    }
+    
     public function testItReturnsTheName()
     {
         $this->assertEquals('test-channel', $this->channel->getName());

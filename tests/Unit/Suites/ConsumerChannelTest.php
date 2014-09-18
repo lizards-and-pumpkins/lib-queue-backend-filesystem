@@ -31,6 +31,13 @@ class ConsumerChannelTest extends BaseTestCase
         $channelName = 'test-channel';
         $this->channel = new ConsumerChannel($this->stubFactory, $this->stubBackendAdapter, $channelName);
     }
+
+    public function testItInitializesAConsumerChannelOnTheBackendAdapter()
+    {
+        $this->stubBackendAdapter->expects($this->once())
+            ->method('initializeConsumerChannel');
+        $this->channel = new ConsumerChannel($this->stubFactory, $this->stubBackendAdapter, 'test');
+    }
     
     public function testItReturnsTheName()
     {

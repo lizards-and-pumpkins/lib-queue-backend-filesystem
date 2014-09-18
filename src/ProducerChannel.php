@@ -33,6 +33,7 @@ class ProducerChannel implements ProducerChannelInterface
         $this->factory = $factory;
         $this->adapter = $adapter;
         $this->channelName = $channelName;
+        $this->adapter->initializeProducerChannel($this);
     }
 
     /**

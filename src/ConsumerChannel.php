@@ -31,6 +31,7 @@ class ConsumerChannel implements ConsumerChannelInterface
         $this->factory = $factory;
         $this->adapter = $adapter;
         $this->channelName = $channelName;
+        $this->adapter->initializeConsumerChannel($this);
     }
 
     /**

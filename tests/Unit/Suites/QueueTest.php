@@ -31,6 +31,13 @@ class QueueTest extends BaseTestCase
         $this->queue = new Queue($this->stubFactory, $this->stubBackendAdapter);
     }
     
+    public function testItInitializesTheBackendAdapter()
+    {
+        $this->stubBackendAdapter->expects($this->once())
+            ->method('initialize');
+        new Queue($this->stubFactory, $this->stubBackendAdapter);
+    }
+    
     public function testItReturnsAProducerChannel()
     {
         $this->addStubProducerChannelToStubFactory($this->stubFactory);

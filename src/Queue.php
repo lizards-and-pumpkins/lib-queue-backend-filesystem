@@ -24,6 +24,7 @@ class Queue implements QueueInterface
     {
         $this->factory = $factory;
         $this->adapter = $adapter;
+        $this->adapter->initialize();
     }
 
     /**
