@@ -187,19 +187,4 @@ class FactoryTest extends BaseTestCase
         $result2 = $this->factory->getNewBackendAdapter();
         $this->assertNotSame($result1, $result2);
     }
-
-    public function testItReturnsABackendAdapterFromTheRepository()
-    {
-        $this->addStubBackendAdapterToStubRepository($this->stubRepository);
-        $result = $this->factory->getSoleBackendAdapterInstance();
-        $this->assertInstanceOf('Brera\Lib\Queue\BackendAdapterInterface', $result);
-    }
-
-    public function testItAlwaysReturnsTheSameBackendAdapterFromTheRepository()
-    {
-        $this->addStubBackendAdapterToStubRepository($this->stubRepository);
-        $result1 = $this->factory->getSoleBackendAdapterInstance();
-        $result2 = $this->factory->getSoleBackendAdapterInstance();
-        $this->assertSame($result1, $result2);
-    }
 } 

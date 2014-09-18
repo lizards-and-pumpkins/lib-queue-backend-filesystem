@@ -129,12 +129,4 @@ class Factory implements FactoryInterface
     {
         return $this->getSoleBackendFactoryInstance()->getBackendAdapter();
     }
-
-    /**
-     * @return BackendAdapterInterface
-     */
-    public function getSoleBackendAdapterInstance()
-    {
-        return $this->repository->getBackendAdapter();
-    }
 } 
