@@ -22,9 +22,6 @@ class Factory implements FactoryInterface
         $this->repository = $repository;
     }
 
-    /**
-     * @return RepositoryInterface
-     */
     public function getNewRepository()
     {
         return new Repository($this);
@@ -38,9 +35,6 @@ class Factory implements FactoryInterface
         return $this->repository->getConfig();
     }
 
-    /**
-     * @return ConfigInterface
-     */
     public function getNewConfig()
     {
         return new Config();
@@ -56,7 +50,7 @@ class Factory implements FactoryInterface
 
     /**
      * @param string $name
-     * @return ProducerChannelInterface
+     * @return ProducerChannel
      */
     public function getProducerChannel($name)
     {
@@ -65,7 +59,7 @@ class Factory implements FactoryInterface
 
     /**
      * @param string $name
-     * @return ConsumerChannelInterface
+     * @return ConsumerChannel
      */
     public function getConsumerChannel($name)
     {
@@ -75,7 +69,7 @@ class Factory implements FactoryInterface
     /**
      * @param ProducerChannelInterface $channel
      * @param string $payload
-     * @return OutgoingMessageInterface
+     * @return OutgoingMessage
      */
     public function getOutgoingMessage(ProducerChannelInterface $channel, $payload)
     {
@@ -85,7 +79,7 @@ class Factory implements FactoryInterface
     /**
      * @param ConsumerChannelInterface $channel
      * @param string $payload
-     * @return IncomingMessageInterface
+     * @return IncomingMessage
      */
     public function getIncomingMessage(ConsumerChannelInterface $channel, $payload)
     {
