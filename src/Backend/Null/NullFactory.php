@@ -3,17 +3,27 @@
 
 namespace Brera\Lib\Queue\Backend\Null;
 
+use Brera\Lib\Queue\BackendConfigInterface;
 use Brera\Lib\Queue\BackendFactoryInterface;
-use Brera\Lib\Queue\FactoryInterface;
 
 class NullFactory implements BackendFactoryInterface
 {
-    private $factory;
-    
-    public function __construct(FactoryInterface $factory)
+    /**
+     * @var NullConfig
+     */
+    private $configuredBackendConfigInstance;
+
+    /**
+     * Will be called after instantiation. Receives the backend config
+     * instance that will be used to configure the queue backend.
+     *
+     * @param BackendConfigInterface $backendConfig
+     */
+    public function setConfiguredBackendConfigInstance(BackendConfigInterface $backendConfig)
     {
-        $this->factory = $factory;
+        $this->configuredBackendConfigInstance = $backendConfig;
     }
+
 
     /**
      * @return NullConfig
@@ -28,7 +38,7 @@ class NullFactory implements BackendFactoryInterface
      */
     public function getBackendAdapter()
     {
-        return new NullAdapter($this, $this->factory->getSoleBackendConfigInstance());
+        return new NullAdapter($this, $this->configuredBackendConfigInstance);
     }
 
 } 

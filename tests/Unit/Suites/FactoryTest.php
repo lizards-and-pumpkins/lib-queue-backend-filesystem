@@ -113,6 +113,7 @@ class FactoryTest extends BaseTestCase
     public function testItReturnsABackendFactory()
     {
         $this->addBackendFactoryClassToStubRepository($this->stubRepository);
+        $this->addStubBackendConfigToStubRepository($this->stubRepository);
         $result = $this->factory->getBackendFactory();
         $this->assertInstanceOf('Brera\Lib\Queue\BackendFactoryInterface', $result);
     }
@@ -120,6 +121,7 @@ class FactoryTest extends BaseTestCase
     public function testItReturnsABackendConfig()
     {
         $this->addBackendFactoryClassToStubRepository($this->stubRepository);
+        $this->addStubBackendConfigToStubRepository($this->stubRepository);
         $result = $this->factory->getNewBackendConfig();
         $this->assertInstanceOf('Brera\Lib\Queue\BackendConfigInterface', $result);
     }
@@ -127,6 +129,7 @@ class FactoryTest extends BaseTestCase
     public function testItReturnsANewBackendConfigInstance()
     {
         $this->addBackendFactoryClassToStubRepository($this->stubRepository);
+        $this->addStubBackendConfigToStubRepository($this->stubRepository);
         $result1 = $this->factory->getNewBackendConfig();
         $result2 = $this->factory->getNewBackendConfig();
         $this->assertNotSame($result1, $result2);
@@ -150,6 +153,7 @@ class FactoryTest extends BaseTestCase
     public function testItReturnsABackendAdapter()
     {
         $this->addBackendFactoryClassToStubRepository($this->stubRepository);
+        $this->addStubBackendConfigToStubRepository($this->stubRepository);
         $result = $this->factory->getNewBackendAdapter();
         $this->assertInstanceOf('Brera\Lib\Queue\BackendAdapterInterface', $result);
     }
@@ -157,6 +161,7 @@ class FactoryTest extends BaseTestCase
     public function testItAlwaysReturnsANewBackendAdapter()
     {
         $this->addBackendFactoryClassToStubRepository($this->stubRepository);
+        $this->addStubBackendConfigToStubRepository($this->stubRepository);
         $result1 = $this->factory->getNewBackendAdapter();
         $result2 = $this->factory->getNewBackendAdapter();
         $this->assertNotSame($result1, $result2);

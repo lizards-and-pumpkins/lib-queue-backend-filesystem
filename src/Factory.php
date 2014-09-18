@@ -92,7 +92,10 @@ class Factory implements FactoryInterface
     public function getBackendFactory()
     {
         $class = $this->repository->getConfiguredBackendFactoryClass();
-        return new $class($this); 
+        /** @var BackendFactoryInterface $factory */
+        $factory = new $class($this);
+        $factory->setConfiguredBackendConfigInstance($this->getSoleBackendConfigInstance());
+        return $factory;
     }
 
     /**
