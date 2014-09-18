@@ -44,9 +44,9 @@ class NullAdapter implements BackendAdapterInterface
 
     /**
      * @param ProducerChannelInterface $channel
-     * @param OutgoingMessageInterface $outgoingMessage
+     * @param OutgoingMessageInterface $message
      */
-    public function sendMessage(ProducerChannelInterface $channel, OutgoingMessageInterface $outgoingMessage)
+    public function sendMessage(ProducerChannelInterface $channel, OutgoingMessageInterface $message)
     {
         // Purposely left empty for null adapter.
     }
