@@ -50,7 +50,8 @@ class Repository implements RepositoryInterface
     public function getBackendFactory()
     {
         if (! isset($this->backendFactory)) {
-            $this->backendFactory = $this->factory->getBackendFactory();
+            $this->backendFactory = $this->factory->getNewBackendFactory();
+            $this->backendFactory->setConfiguredBackendConfigInstance($this->getBackendConfig());
         }
         return $this->backendFactory;
     }

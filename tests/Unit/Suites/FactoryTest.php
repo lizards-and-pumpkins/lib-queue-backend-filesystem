@@ -17,7 +17,7 @@ class FactoryTest extends BaseTestCase
      * @var \PHPUnit_Framework_MockObject_MockObject
      */
     private $stubRepository;
-    
+
     public function setUp()
     {
         $stubRepository = $this->getStubRepository();
@@ -38,7 +38,7 @@ class FactoryTest extends BaseTestCase
         $result2 = $this->factory->getNewRepository();
         $this->assertNotSame($result1, $result2);
     }
-    
+
     public function testItReturnsANewRepositoryEvenAfterOneWasSet()
     {
         $repository1 = $this->factory->getNewRepository();
@@ -46,13 +46,13 @@ class FactoryTest extends BaseTestCase
         $repository2 = $this->factory->getNewRepository();
         $this->assertNotSame($repository1, $repository2);
     }
-    
+
     public function testItReturnsAConfigInstance()
     {
         $result = $this->factory->getNewConfig();
         $this->assertInstanceOf('Brera\Lib\Queue\ConfigInterface', $result);
     }
-    
+
     public function testItAlwaysReturnsANewConfigInstance()
     {
         $result1 = $this->factory->getNewConfig();
@@ -66,7 +66,7 @@ class FactoryTest extends BaseTestCase
         $result = $this->factory->getSoleConfigInstance();
         $this->assertInstanceOf('Brera\Lib\Queue\ConfigInterface', $result);
     }
-    
+
     public function testItAlwaysReturnsTheSameConfigInstanceFromRepository()
     {
         $this->addStubConfigToStubRepository($this->stubRepository);
@@ -81,60 +81,83 @@ class FactoryTest extends BaseTestCase
         $result = $this->factory->getQueue();
         $this->assertInstanceOf('Brera\Lib\Queue\QueueInterface', $result);
     }
-    
+
     public function testItReturnsAProducerChannel()
     {
         $this->addStubBackendAdapterToStubRepository($this->stubRepository);
         $result = $this->factory->getProducerChannel('test-name');
         $this->assertInstanceOf('Brera\Lib\Queue\ProducerChannelInterface', $result);
     }
-    
+
     public function testItReturnsAConsumerChannel()
     {
         $this->addStubBackendAdapterToStubRepository($this->stubRepository);
         $result = $this->factory->getConsumerChannel('test-name');
         $this->assertInstanceOf('Brera\Lib\Queue\ConsumerChannelInterface', $result);
     }
-    
+
     public function testItReturnsAnOutgoingMessage()
     {
         $this->addStubBackendAdapterToStubRepository($this->stubRepository);
         $result = $this->factory->getOutgoingMessage($this->getStubProducerChannel(), 'test-payload');
         $this->assertInstanceOf('Brera\Lib\Queue\OutgoingMessageInterface', $result);
     }
-    
+
     public function testItReturnsAnIncomingMessage()
     {
         $this->addStubBackendAdapterToStubRepository($this->stubRepository);
         $result = $this->factory->getIncomingMessage($this->getStubConsumerChannel(), 'test-payload');
         $this->assertInstanceOf('Brera\Lib\Queue\IncomingMessageInterface', $result);
     }
-    
+
     public function testItReturnsABackendFactory()
     {
         $this->addBackendFactoryClassToStubRepository($this->stubRepository);
         $this->addStubBackendConfigToStubRepository($this->stubRepository);
-        $result = $this->factory->getBackendFactory();
+        $result = $this->factory->getNewBackendFactory();
         $this->assertInstanceOf('Brera\Lib\Queue\BackendFactoryInterface', $result);
     }
-    
-    public function testItReturnsABackendConfig()
+
+    public function testItAlwaysReturnsANewBackendFactory()
     {
         $this->addBackendFactoryClassToStubRepository($this->stubRepository);
         $this->addStubBackendConfigToStubRepository($this->stubRepository);
+        $result1 = $this->factory->getNewBackendFactory();
+        $result2 = $this->factory->getNewBackendFactory();
+        $this->assertNotSame($result1, $result2);
+    }
+
+    public function testItReturnsABackendFactoryFromTheRepository()
+    {
+        $this->addStubBackendFactoryToStubRepository($this->stubRepository);
+        $result = $this->factory->getSoleBackendFactoryInstance();
+        $this->assertInstanceOf('Brera\Lib\Queue\BackendFactoryInterface', $result);
+    }
+
+    public function testItAlwaysReturnsTheSameBackendFactoryInstance()
+    {
+        $this->addBackendFactoryClassToStubRepository($this->stubRepository);
+        $this->addStubBackendConfigToStubRepository($this->stubRepository);
+        $result1 = $this->factory->getSoleBackendFactoryInstance();
+        $result2 = $this->factory->getSoleBackendFactoryInstance();
+        $this->assertSame($result1, $result2);
+    }
+
+    public function testItReturnsABackendConfig()
+    {
+        $this->addStubBackendFactoryToStubRepository($this->stubRepository);
         $result = $this->factory->getNewBackendConfig();
         $this->assertInstanceOf('Brera\Lib\Queue\BackendConfigInterface', $result);
     }
-    
+
     public function testItReturnsANewBackendConfigInstance()
     {
-        $this->addBackendFactoryClassToStubRepository($this->stubRepository);
-        $this->addStubBackendConfigToStubRepository($this->stubRepository);
+        $this->addStubBackendFactoryToStubRepository($this->stubRepository);
         $result1 = $this->factory->getNewBackendConfig();
         $result2 = $this->factory->getNewBackendConfig();
         $this->assertNotSame($result1, $result2);
     }
-    
+
     public function testItReturnsABackendConfigFromRepository()
     {
         $this->addStubBackendConfigToStubRepository($this->stubRepository);
@@ -149,31 +172,29 @@ class FactoryTest extends BaseTestCase
             ->method('getBackendConfig');
         $this->factory->getSoleBackendConfigInstance();
     }
-    
+
     public function testItReturnsABackendAdapter()
     {
-        $this->addBackendFactoryClassToStubRepository($this->stubRepository);
-        $this->addStubBackendConfigToStubRepository($this->stubRepository);
+        $this->addStubBackendFactoryToStubRepository($this->stubRepository);
         $result = $this->factory->getNewBackendAdapter();
         $this->assertInstanceOf('Brera\Lib\Queue\BackendAdapterInterface', $result);
     }
-    
+
     public function testItAlwaysReturnsANewBackendAdapter()
     {
-        $this->addBackendFactoryClassToStubRepository($this->stubRepository);
-        $this->addStubBackendConfigToStubRepository($this->stubRepository);
+        $this->addStubBackendFactoryToStubRepository($this->stubRepository);
         $result1 = $this->factory->getNewBackendAdapter();
         $result2 = $this->factory->getNewBackendAdapter();
         $this->assertNotSame($result1, $result2);
     }
-    
+
     public function testItReturnsABackendAdapterFromTheRepository()
     {
         $this->addStubBackendAdapterToStubRepository($this->stubRepository);
         $result = $this->factory->getSoleBackendAdapterInstance();
         $this->assertInstanceOf('Brera\Lib\Queue\BackendAdapterInterface', $result);
     }
-    
+
     public function testItAlwaysReturnsTheSameBackendAdapterFromTheRepository()
     {
         $this->addStubBackendAdapterToStubRepository($this->stubRepository);
