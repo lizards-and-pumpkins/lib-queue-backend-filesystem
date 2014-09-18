@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<phpunit bootstrap="bootstrap.php">
+    <testsuite name="Brera Queue Library Unit Tests">
+        <directory>.</directory>
+    </testsuite>
+    <filter>
+        <whitelist>
+            <directory>../../src</directory>
+        </whitelist>
+    </filter>
+</phpunit>
