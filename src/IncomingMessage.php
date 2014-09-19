@@ -20,6 +20,11 @@ class IncomingMessage implements IncomingMessageInterface
      * @var string
      */
     private $payload;
+
+    /**
+     * @var mixed
+     */
+    private $identifier;
     
     /**
      * @param ConsumerChannelInterface $channel
@@ -31,6 +36,23 @@ class IncomingMessage implements IncomingMessageInterface
         $this->channel = $channel;
         $this->adapter = $adapter;
         $this->payload = $payload;
+    }
+
+    /**
+     * @param mixed $identifier
+     * @return void
+     */
+    public function setIdentifier($identifier)
+    {
+        $this->identifier = $identifier;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getIdentifier()
+    {
+        return $this->identifier;
     }
 
     /**

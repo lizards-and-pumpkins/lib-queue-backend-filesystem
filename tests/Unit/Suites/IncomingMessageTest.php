@@ -32,6 +32,13 @@ class IncomingMessageTest extends BaseTestCase
         $this->message = new IncomingMessage($this->stubChannel, $this->stubBackendAdapter, $payload);
     }
     
+    public function testItReturnsTheSetIdentifier()
+    {
+        $value = 'test message id';
+        $this->message->setIdentifier($value);
+        $this->assertEquals($value, $this->message->getIdentifier());
+    }
+    
     public function testItReturnsThePayload()
     {
         $this->assertEquals('test-payload', $this->message->getPayload());
