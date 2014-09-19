@@ -31,7 +31,7 @@ class BootstrapQueueTest extends \PHPUnit_Framework_TestCase
         $producerChannel = $queue->getProducerChannel('test');
         $this->assertInstanceOf('Brera\Lib\Queue\ProducerChannel', $producerChannel);
 
-        $outgoingMessage = $producerChannel->createOutgoingMessage('test');
+        $outgoingMessage = $producerChannel->createOutgoingMessage('test1');
         $this->assertInstanceOf('Brera\Lib\Queue\OutgoingMessage', $outgoingMessage);
         
         // Run sendMessage with each valid argument type (OutgoingMessage and string)
