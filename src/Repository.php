@@ -11,9 +11,9 @@ class Repository implements RepositoryInterface
      */
     private $factory;
     private $config;
-    private $queue;
     private $backendFactory;
-    private $backendAdapter;
+    private $producerAdapter;
+    private $consumerAdapter;
     private $backendConfig;
     
     
@@ -34,17 +34,6 @@ class Repository implements RepositoryInterface
     }
 
     /**
-     * @return QueueInterface
-     */
-    public function getQueue()
-    {
-        if (! isset($this->queue)) {
-            $this->queue = $this->factory->getQueue();
-        }
-        return $this->queue;
-    }
-
-    /**
      * @return BackendFactoryInterface
      */
     public function getBackendFactory()
@@ -56,14 +45,25 @@ class Repository implements RepositoryInterface
     }
 
     /**
-     * @return BackendAdapterInterface
+     * @return ProducerAdapterInterface
      */
-    public function getBackendAdapter()
+    public function getProducerAdapter()
     {
-        if (! isset($this->backendAdapter)) {
-            $this->backendAdapter = $this->factory->getNewBackendAdapter();
+        if (! isset($this->producerAdapter)) {
+            $this->producerAdapter = $this->getBackendFactory()->getProducerAdapter();
         }
-        return $this->backendAdapter;
+        return $this->producerAdapter;
+    }
+
+    /**
+     * @return ConsumerAdapterInterface
+     */
+    public function getConsumerAdapter()
+    {
+        if (! isset($this->consumerAdapter)) {
+            $this->consumerAdapter = $this->getBackendFactory()->getConsumerAdapter();
+        }
+        return $this->consumerAdapter;
     }
 
     /**
@@ -72,7 +72,7 @@ class Repository implements RepositoryInterface
     public function getBackendConfig()
     {
         if (! isset($this->backendConfig)) {
-            $this->backendConfig = $this->factory->getNewBackendConfig();
+            $this->backendConfig = $this->getBackendFactory()->getNewBackendConfig();
             $this->getBackendFactory()->setConfiguredBackendConfigInstance($this->backendConfig);
         }
         return $this->backendConfig;

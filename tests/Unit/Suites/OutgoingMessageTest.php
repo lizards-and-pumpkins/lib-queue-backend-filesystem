@@ -3,38 +3,22 @@
 
 namespace Brera\Lib\Queue\Tests\Unit;
 
-require_once __DIR__ . '/../../../vendor/brera/lib-queue-interfaces/tests/Unit/Helper/BaseTestCase.php';
+require_once __DIR__ . '/MessageTestAbstract.php';
 
 use Brera\Lib\Queue\OutgoingMessage;
 
-
-class OutgoingMessageTest extends BaseTestCase
+class OutgoingMessageTest extends MessageTestAbstract
 {
-    /**
-     * @var \PHPUnit_Framework_MockObject_MockObject
-     */
-    private $stubBackendAdapter;
-    
-    /**
-     * @var \PHPUnit_Framework_MockObject_MockObject
-     */
-    private $stubProducerChannel;
-    
-    /**
-     * @var OutgoingMessage
-     */
-    private $message;
-    
     public function setUp()
     {
-        $this->stubProducerChannel = $this->getStubProducerChannel();
-        $this->stubBackendAdapter = $this->getStubBackendAdapter();
-        $payload = 'test-payload';
-        $this->message = new OutgoingMessage($this->stubProducerChannel, $this->stubBackendAdapter, $payload);
+        $this->message = new OutgoingMessage($this->testChannelName, $this->testPayload, $this->testIdentifier);
     }
-    
-    public function testItReturnsThePayload()
+
+    /**
+     * @test
+     */
+    public function itShouldImplementTheOutgoingMessageInterface()
     {
-        $this->assertEquals('test-payload', $this->message->getPayload());
+        $this->assertInstanceOf('Brera\Lib\Queue\OutgoingMessageInterface', $this->message);
     }
 } 

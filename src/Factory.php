@@ -28,9 +28,9 @@ class Factory implements FactoryInterface
     }
 
     /**
-     * @return ConfigInterface
+     * @return Config
      */
-    public function getSoleConfigInstance()
+    public function getRegisteredConfigInstance()
     {
         return $this->repository->getConfig();
     }
@@ -40,50 +40,45 @@ class Factory implements FactoryInterface
         return new Config();
     }
 
-    /**
-     * @return QueueInterface
-     */
-    public function getQueue()
+    public function getConsumerQueue()
     {
-        return new Queue($this, $this->repository->getBackendAdapter());
+        return new ConsumerQueue($this->repository->getConsumerAdapter());
+    }
+
+    public function getProducerQueue()
+    {
+        return new ProducerQueue($this->repository->getProducerAdapter());
     }
 
     /**
-     * @param string $name
-     * @return ProducerChannel
-     */
-    public function getProducerChannel($name)
-    {
-        return new ProducerChannel($this, $this->repository->getBackendAdapter(), $name);
-    }
-
-    /**
-     * @param string $name
-     * @return ConsumerChannel
-     */
-    public function getConsumerChannel($name)
-    {
-        return new ConsumerChannel($this, $this->repository->getBackendAdapter(), $name);
-    }
-
-    /**
-     * @param ProducerChannelInterface $channel
+     * @param string $channelName
      * @param string $payload
+     * @param mixed $identifier
      * @return OutgoingMessage
      */
-    public function getOutgoingMessage(ProducerChannelInterface $channel, $payload)
+    public function getOutgoingMessage($channelName, $payload, $identifier)
     {
-        return new OutgoingMessage($channel, $this->repository->getBackendAdapter(), $payload);
+        return new OutgoingMessage($channelName, $payload, $identifier);
     }
 
     /**
-     * @param ConsumerChannelInterface $channel
-     * @param string $payload
-     * @return IncomingMessage
+     * @return MessageBuilder
      */
-    public function getIncomingMessage(ConsumerChannelInterface $channel, $payload)
+    public function getMessageBuilder()
     {
-        return new IncomingMessage($channel, $this->repository->getBackendAdapter(), $payload);
+        return new MessageBuilder($this);
+    }
+
+
+    /**
+     * @param string $channelName
+     * @param string $payload
+     * @param mixed $identifier
+     * @return IncomingMessageInterface
+     */
+    public function getIncomingMessage($channelName, $payload, $identifier)
+    {
+        return new IncomingMessage($channelName, $payload, $identifier);
     }
 
     /**
@@ -100,7 +95,7 @@ class Factory implements FactoryInterface
     /**
      * @return BackendFactoryInterface
      */
-    public function getSoleBackendFactoryInstance()
+    public function getRegisteredBackendFactoryInstance()
     {
         return $this->repository->getBackendFactory();
     }
@@ -110,23 +105,14 @@ class Factory implements FactoryInterface
      */
     public function getNewBackendConfig()
     {
-        return $this->getSoleBackendFactoryInstance()->getNewBackendConfig();
+        return $this->getRegisteredBackendFactoryInstance()->getNewBackendConfig();
     }
 
     /**
      * @return BackendConfigInterface
      */
-    public function getSoleBackendConfigInstance()
+    public function getRegisteredBackendConfigInstance()
     {
         return $this->repository->getBackendConfig();
-    }
-
-
-    /**
-     * @return BackendAdapterInterface
-     */
-    public function getNewBackendAdapter()
-    {
-        return $this->getSoleBackendFactoryInstance()->getBackendAdapter();
     }
 } 

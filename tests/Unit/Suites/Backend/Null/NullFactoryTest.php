@@ -3,31 +3,91 @@
 namespace Brera\Lib\Queue\Tests\Unit\Backend\Null;
 
 use Brera\Lib\Queue\Backend\Null\NullFactory;
-use Brera\Lib\Queue\Tests\Unit\BaseTestCase;
 
-class NullFactoryTest extends BaseTestCase
+class NullFactoryTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var NullFactory
      */
     private $backendFactory;
+
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject
+     */
+    private $stubFactory;
     
     public function setUp()
     {
-        $this->backendFactory = new NullFactory();
+        $this->stubFactory = $this->getStubFactory();
+        $this->backendFactory = new NullFactory($this->stubFactory);
+        $this->backendFactory->setConfiguredBackendConfigInstance($this->getStubNullConfig());
     }
-    
-    public function testItReturnsANullBackendConfig()
+
+    /**
+     * @test
+     */
+    public function itShouldExtendTheAbstractBackendFactory()
+    {
+        $this->assertInstanceOf('Brera\Lib\Queue\AbstractBackendFactory', $this->backendFactory);
+    }
+
+    /**
+     * @test
+     */
+    public function itShouldReturnANullConfigInstance()
     {
         $result = $this->backendFactory->getNewBackendConfig();
         $this->assertInstanceOf('Brera\Lib\Queue\Backend\Null\NullConfig', $result);
     }
-    
-    public function testItReturnsANullBackendAdapter()
+
+    /**
+     * @test
+     */
+    public function itShouldReturnANullConsumerAdapter()
     {
-        $stubBackendConfig = $this->getStubBackendConfig();
-        $this->backendFactory->setConfiguredBackendConfigInstance($stubBackendConfig);
-        $result = $this->backendFactory->getBackendAdapter();
-        $this->assertInstanceOf('Brera\Lib\Queue\Backend\Null\NullAdapter', $result);
+        $this->setStubMessageBuilderOnStubFactory();
+        $result = $this->backendFactory->getConsumerAdapter();
+        $this->assertInstanceOf('Brera\Lib\Queue\Backend\Null\NullConsumerAdapter', $result);
+    }
+
+    /**
+     * @test
+     */
+    public function itShouldReturnANullProducerAdapter()
+    {
+        $this->setStubMessageBuilderOnStubFactory();
+        $result = $this->backendFactory->getProducerAdapter();
+        $this->assertInstanceOf('Brera\Lib\Queue\Backend\Null\NullProducerAdapter', $result);
+    }
+
+    private function getStubFactory()
+    {
+        $stubFactory = $this->getMockBuilder('Brera\Lib\Queue\Factory')
+            ->disableOriginalConstructor()
+            ->getMock();
+        return $stubFactory;
+    }
+
+    private function setStubMessageBuilderOnStubFactory()
+    {
+        $this->stubFactory->expects($this->any())
+            ->method('getMessageBuilder')
+            ->will($this->returnCallback(function() {
+                return $this->getStubMessageBuilder();
+            }));
+    }
+
+    private function getStubMessageBuilder()
+    {
+        $stubMessageBuilder = $this->getMockBuilder('Brera\Lib\Queue\MessageBuilder')
+            ->disableOriginalConstructor()
+            ->getMock();
+        return $stubMessageBuilder;
+    }
+
+    private function getStubNullConfig()
+    {
+        $stubNullConfig = $this->getMock('Brera\Lib\Queue\Backend\Null\NullConfig');
+        return $stubNullConfig;
     }
 } 

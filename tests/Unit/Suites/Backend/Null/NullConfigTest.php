@@ -15,8 +15,11 @@ class NullConfigTest extends \PHPUnit_Framework_TestCase
     {
         $this->config = new NullConfig();
     }
-    
-    public function testItImplementsTheBackendConfigInterface()
+
+    /**
+     * @test
+     */
+    public function itShouldImplementTheBackendConfigInterface()
     {
         $this->assertInstanceOf('Brera\Lib\Queue\BackendConfigInterface', $this->config);
     }

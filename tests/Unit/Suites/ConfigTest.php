@@ -16,13 +16,19 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
     {
         $this->config = new Config();
     }
-    
-    public function testItReturnsTheNullFactoryClassByDefault()
+
+    /**
+     * @test
+     */
+    public function itShouldReturnTheNullFactoryClassByDefault()
     {
         $this->assertEquals('Brera\Lib\Queue\Backend\Null\NullFactory', $this->config->getBackendFactoryClass());
     }
-    
-    public function testTheBackendFactoryClassCanBeSet()
+
+    /**
+     * @test
+     */
+    public function theBackendFactoryClassShouldBeSettable()
     {
         $this->config->setBackendFactoryClass('test');
         $this->assertEquals('test', $this->config->getBackendFactoryClass());

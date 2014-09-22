@@ -19,37 +19,37 @@ class BootstrapQueueTest extends \PHPUnit_Framework_TestCase
     
     public function testBootstrapAndProcessFlowWithNullBackend()
     {
-        $config = $this->factory->getSoleConfigInstance();
+        $config = $this->factory->getRegisteredConfigInstance();
         $this->assertContains('NullFactory', $config->getBackendFactoryClass());
         
-        $backendConfig = $this->factory->getSoleBackendConfigInstance();
+        $backendConfig = $this->factory->getRegisteredBackendConfigInstance();
         $this->assertInstanceOf('Brera\Lib\Queue\Backend\Null\NullConfig', $backendConfig);
         
-        $queue = $this->factory->getQueue();
-        $this->assertInstanceOf('Brera\Lib\Queue\Queue', $queue);
+        $producerQueue = $this->factory->getProducerQueue();
+        $this->assertInstanceOf('Brera\Lib\Queue\ProducerQueue', $producerQueue);
         
-        $producerChannel = $queue->getProducerChannel('test');
-        $this->assertInstanceOf('Brera\Lib\Queue\ProducerChannel', $producerChannel);
-
-        $outgoingMessage = $producerChannel->createOutgoingMessage('test1');
+        $testPayloadValue = 'test-payload';
+        $outgoingMessage = $producerQueue->sendMessageByChannel('test-channel', $testPayloadValue);
         $this->assertInstanceOf('Brera\Lib\Queue\OutgoingMessage', $outgoingMessage);
         
-        // Run sendMessage with each valid argument type (OutgoingMessage and string)
-        $producerChannel->sendMessage($outgoingMessage);
-        $producerChannel->sendMessage('test2');
+        $this->assertEquals($testPayloadValue, $producerQueue->getMessagePayload($outgoingMessage));
         
-        $consumerChannel = $queue->getConsumerChannel('test');
-        $this->assertInstanceOf('Brera\Lib\Queue\ConsumerChannel', $consumerChannel);
+        $consumerQueue = $this->factory->getConsumerQueue();
         
-        $incomingMessage = $consumerChannel->receiveMessage();
+        $incomingMessage = $consumerQueue->receiveMessageFromChannel('test-channel');
         $this->assertInstanceOf('Brera\Lib\Queue\IncomingMessage', $incomingMessage);
+
+        $this->assertEquals('', $consumerQueue->getMessagePayload($incomingMessage));
+        
+        $consumerQueue->setMessageAsProcessed($incomingMessage);
+        
     }
     
     public function testTheSoleBackendConfigInstanceIsSetOnTheBackendFactory()
     {
         /** @var NullConfig $backendConfig */
-        $backendConfig = $this->factory->getSoleBackendConfigInstance();
-        $backendFactory = $this->factory->getSoleBackendFactoryInstance();
+        $backendConfig = $this->factory->getRegisteredBackendConfigInstance();
+        $backendFactory = $this->factory->getRegisteredBackendFactoryInstance();
         
         $this->assertAttributeSame($backendConfig, 'configuredBackendConfigInstance', $backendFactory);
     }

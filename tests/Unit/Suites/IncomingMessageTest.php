@@ -3,51 +3,22 @@
 
 namespace Brera\Lib\Queue\Tests\Unit;
 
-require_once __DIR__ . '/../../../vendor/brera/lib-queue-interfaces/tests/Unit/Helper/BaseTestCase.php';
+require_once __DIR__ . '/MessageTestAbstract.php';
 
 use Brera\Lib\Queue\IncomingMessage;
 
-class IncomingMessageTest extends BaseTestCase
+class IncomingMessageTest extends MessageTestAbstract
 {
-    /**
-     * @var \PHPUnit_Framework_MockObject_MockObject
-     */
-    private $stubChannel;
-    
-    /**
-     * @var \PHPUnit_Framework_MockObject_MockObject
-     */
-    private $stubBackendAdapter;
-    
-    /**
-     * @var IncomingMessage
-     */
-    private $message;
-    
     public function setUp()
     {
-        $this->stubChannel = $this->getStubConsumerChannel();
-        $this->stubBackendAdapter = $this->getStubBackendAdapter();
-        $payload = 'test-payload';
-        $this->message = new IncomingMessage($this->stubChannel, $this->stubBackendAdapter, $payload);
+        $this->message = new IncomingMessage($this->testChannelName, $this->testPayload, $this->testIdentifier);
     }
-    
-    public function testItReturnsTheSetIdentifier()
+
+    /**
+     * @test
+     */
+    public function itShouldImplementTheIncomingMessageInterface()
     {
-        $value = 'test message id';
-        $this->message->setIdentifier($value);
-        $this->assertEquals($value, $this->message->getIdentifier());
+        $this->assertInstanceOf('Brera\Lib\Queue\IncomingMessageInterface', $this->message);
     }
-    
-    public function testItReturnsThePayload()
-    {
-        $this->assertEquals('test-payload', $this->message->getPayload());
-    }
-    
-    public function testItDelegatesToTheBackendAdapterToSetAMessageAsProcessed()
-    {
-        $this->stubBackendAdapter->expects($this->once())
-            ->method('confirmMessageIsProcessed');
-        $this->message->setAsProcessed();
-    }
-} 
+}
