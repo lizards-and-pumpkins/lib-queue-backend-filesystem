@@ -15,6 +15,11 @@ class NullConsumerAdapter extends AbstractConsumerAdapter
     protected function receiveBackendMessageFromChannel($channelName)
     {
         // Implement receiveBackendMessageFromChannel() for real consumer adapter.
+        return array(
+            'payload' => '',
+            'channel' => $channelName,
+            'identifier' => null
+        );
     }
 
     /**
@@ -24,7 +29,7 @@ class NullConsumerAdapter extends AbstractConsumerAdapter
     protected function getPayloadFromBackendMessage($message)
     {
         // Implement getPayloadFromBackendMessage() for real consumer adapter.
-        return '';
+        return $message['payload'];
     }
 
     /**
@@ -34,6 +39,7 @@ class NullConsumerAdapter extends AbstractConsumerAdapter
     protected function getIdentifierFromBackendMessage($message)
     {
         // Implement getIdentifierFromBackendMessage() for real consumer adapter.
+        return $message['identifier'];
     }
 
     /**
