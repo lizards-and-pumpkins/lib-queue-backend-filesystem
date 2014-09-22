@@ -15,8 +15,9 @@ class NullProducerAdapterTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         $stubMessageBuilder = $this->getStubMessageBuilder();
+        $stubBackendFactory = $this->getStubBackendFactory();
         $stubBackendConfig = $this->getStubBackendConfig();
-        $this->adapter = new NullProducerAdapter($stubMessageBuilder, $stubBackendConfig);
+        $this->adapter = new NullProducerAdapter($stubMessageBuilder, $stubBackendFactory, $stubBackendConfig);
     }
 
     /**
@@ -41,5 +42,13 @@ class NullProducerAdapterTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
         return $stubNullConfig;
+    }
+
+    private function getStubBackendFactory()
+    {
+        $stubBackendFactory = $this->getMockBuilder('Brera\Lib\Queue\Backend\Null\NullFactory')
+            ->disableOriginalConstructor()
+            ->getMock();
+        return $stubBackendFactory;
     }
 } 

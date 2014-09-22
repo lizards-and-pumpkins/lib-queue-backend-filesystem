@@ -3,6 +3,7 @@
 namespace Brera\Lib\Queue\Tests\Integration;
 
 use Brera\Lib\Queue\Backend\Null\NullConfig;
+use Brera\Lib\Queue\Backend\Null\NullFactory;
 use Brera\Lib\Queue\Factory;
 
 class BootstrapQueueTest extends \PHPUnit_Framework_TestCase
@@ -45,11 +46,12 @@ class BootstrapQueueTest extends \PHPUnit_Framework_TestCase
         
     }
     
-    public function testTheSoleBackendConfigInstanceIsSetOnTheBackendFactory()
+    public function testTheRegisteredBackendConfigInstanceIsSetOnTheBackendFactory()
     {
         /** @var NullConfig $backendConfig */
-        $backendConfig = $this->factory->getRegisteredBackendConfigInstance();
+        /** @var NullFactory $backendConfig */
         $backendFactory = $this->factory->getRegisteredBackendFactoryInstance();
+        $backendConfig = $this->factory->getRegisteredBackendConfigInstance();
         
         $this->assertAttributeSame($backendConfig, 'configuredBackendConfigInstance', $backendFactory);
     }
