@@ -15,9 +15,8 @@ class NullProducerAdapterTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         $stubMessageBuilder = $this->getStubMessageBuilder();
-        $stubBackendFactory = $this->getStubBackendFactory();
         $stubBackendConfig = $this->getStubBackendConfig();
-        $this->adapter = new NullProducerAdapter($stubMessageBuilder, $stubBackendFactory, $stubBackendConfig);
+        $this->adapter = new NullProducerAdapter($stubMessageBuilder, $stubBackendConfig, false);
     }
 
     /**

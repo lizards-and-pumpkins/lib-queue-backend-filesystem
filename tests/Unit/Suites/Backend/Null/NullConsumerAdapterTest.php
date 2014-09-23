@@ -19,9 +19,8 @@ class NullConsumerAdapterTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->stubMessageBuilder = $this->getStubMessageBuilder();
-        $stubBackendFactory = $this->getStubBackendFactory();
         $stubBackendConfig = $this->getStubBackendConfig();
-        $this->adapter = new NullConsumerAdapter($this->stubMessageBuilder, $stubBackendFactory, $stubBackendConfig);
+        $this->adapter = new NullConsumerAdapter($this->stubMessageBuilder, $stubBackendConfig, false);
     }
 
     /**
