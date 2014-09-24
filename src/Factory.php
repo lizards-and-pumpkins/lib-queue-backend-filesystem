@@ -103,14 +103,6 @@ class Factory implements FactoryInterface
     /**
      * @return BackendConfigInterface
      */
-    public function getNewBackendConfig()
-    {
-        return $this->getRegisteredBackendFactoryInstance()->getNewBackendConfig();
-    }
-
-    /**
-     * @return BackendConfigInterface
-     */
     public function getRegisteredBackendConfigInstance()
     {
         return $this->repository->getBackendConfig();

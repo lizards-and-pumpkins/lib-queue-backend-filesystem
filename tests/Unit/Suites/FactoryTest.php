@@ -149,22 +149,6 @@ class FactoryTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function itShouldReturnABackendConfigInstanceFromTheBackendFactory()
-    {
-        $stubBackendConfig = $this->getBreraQueueStubDisableOriginalConstructor('BackendConfigInterface');
-        $stubBackendFactory = $this->getBreraQueueStubDisableOriginalConstructor('BackendFactoryInterface');
-        $this->setStubReturnValueOnStubRepository('getBackendFactory', $stubBackendFactory);
-        $stubBackendFactory->expects($this->once())
-            ->method('getNewBackendConfig')
-            ->will($this->returnValue($stubBackendConfig));
-        
-        $result = $this->factory->getNewBackendConfig();
-        $this->assertSame($stubBackendConfig, $result);
-    }
-
-    /**
-     * @test
-     */
     public function itShouldReturnTheRegisteredBackendConfigInstance()
     {
         $stubBackendConfig = $this->getBreraQueueStubDisableOriginalConstructor('BackendConfigInterface');
