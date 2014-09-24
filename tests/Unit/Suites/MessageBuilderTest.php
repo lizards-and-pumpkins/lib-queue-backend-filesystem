@@ -17,9 +17,6 @@ class MessageBuilderTest extends \PHPUnit_Framework_TestCase
      */
     private $stubFactory;
 
-    /**
-     *
-     */
     public function setUp()
     {
         $this->stubFactory = $this->getStubFactory();
@@ -28,6 +25,16 @@ class MessageBuilderTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
+     * @covers Brera\Lib\Queue\MessageBuilder::__construct
+     */
+    public function itShouldImplementTheMessageBuilderInterface()
+    {
+        $this->assertInstanceOf('Brera\Lib\Queue\MessageBuilderInterface', $this->messageBuilder);
+    }
+
+    /**
+     * @test
+     * @covers Brera\Lib\Queue\MessageBuilder::setIdentifier
      */
     public function theIdentifierShouldBeSettable()
     {
@@ -38,6 +45,7 @@ class MessageBuilderTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
+     * @covers Brera\Lib\Queue\MessageBuilder::setPayload
      */
     public function thePayloadShouldBeSettable()
     {
@@ -48,6 +56,7 @@ class MessageBuilderTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
+     * @covers Brera\Lib\Queue\MessageBuilder::setChannel
      */
     public function theChannelShouldBeSettable()
     {
@@ -58,6 +67,7 @@ class MessageBuilderTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
+     * @covers Brera\Lib\Queue\MessageBuilder::initializeFromMessage
      */
     public function itShouldCopyAllValuesFromAGivenMessage()
     {
@@ -74,6 +84,7 @@ class MessageBuilderTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
+     * @covers Brera\Lib\Queue\MessageBuilder::getIncomingMessage
      */
     public function itShouldReturnAnIncomingMessage()
     {
@@ -84,6 +95,7 @@ class MessageBuilderTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
+     * @covers Brera\Lib\Queue\MessageBuilder::getOutgoingMessage
      */
     public function itShouldReturnAnOutgoingMessage()
     {

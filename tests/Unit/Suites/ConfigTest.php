@@ -19,14 +19,8 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     */
-    public function itShouldReturnTheNullFactoryClassByDefault()
-    {
-        $this->assertEquals('Brera\Lib\Queue\Backend\Null\NullFactory', $this->config->getBackendFactoryClass());
-    }
-
-    /**
-     * @test
+     * @covers Brera\Lib\Queue\Config::setBackendFactoryClass
+     * @covers Brera\Lib\Queue\Config::getBackendFactoryClass
      */
     public function theBackendFactoryClassShouldBeSettable()
     {

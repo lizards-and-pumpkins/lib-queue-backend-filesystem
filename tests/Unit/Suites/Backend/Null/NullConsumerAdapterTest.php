@@ -25,6 +25,7 @@ class NullConsumerAdapterTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
+     * @covers Brera\Lib\Queue\Backend\Null\NullConsumerAdapter::receiveMessageFromChannel
      */
     public function itShouldReturnAnEmptyIncomingMessage()
     {

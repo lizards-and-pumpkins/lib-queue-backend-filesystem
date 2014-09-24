@@ -18,6 +18,7 @@ class NullConfigTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
+     * @coversNothing
      */
     public function itShouldImplementTheBackendConfigInterface()
     {

@@ -25,6 +25,16 @@ class ConsumerQueueTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
+     * @covers Brera\Lib\Queue\ConsumerQueue::__construct
+     */
+    public function itShouldImplementTheConsumerQueueInterface()
+    {
+        $this->assertInstanceOf('Brera\Lib\Queue\ConsumerQueueInterface', $this->queue);
+    }
+
+    /**
+     * @test
+     * @covers Brera\Lib\Queue\ConsumerQueue::receiveMessageFromChannel
      */
     public function itShouldDelegateToTheAdapterToReceiveAMessage()
     {
@@ -35,6 +45,7 @@ class ConsumerQueueTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
+     * @covers Brera\Lib\Queue\ConsumerQueue::receiveMessageFromChannel
      */
     public function itShouldReturnAnIncomingMessage()
     {
@@ -48,6 +59,7 @@ class ConsumerQueueTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
+     * @covers Brera\Lib\Queue\ConsumerQueue::setMessageAsProcessed
      */
     public function itShouldDelegateToTheAdapterToSetAMessageAsProcessed()
     {
@@ -60,6 +72,7 @@ class ConsumerQueueTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
+     * @covers Brera\Lib\Queue\ConsumerQueue::getMessagePayload
      */
     public function itShouldReturnAMessagePayload()
     {

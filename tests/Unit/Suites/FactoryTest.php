@@ -25,6 +25,16 @@ class FactoryTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
+     * @covers Brera\Lib\Queue\Factory::__construct
+     */
+    public function itShouldImplementTheFactoryInterface()
+    {
+        $this->assertInstanceOf('Brera\Lib\Queue\FactoryInterface', $this->factory);
+    }
+
+    /**
+     * @test
+     * @covers Brera\Lib\Queue\Factory::setRepository
      */
     public function theRepositoryShouldBeSettable()
     {
@@ -35,6 +45,7 @@ class FactoryTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
+     * @covers Brera\Lib\Queue\Factory::getNewRepository
      */
     public function itShouldReturnARepositoryInstance()
     {
@@ -44,6 +55,7 @@ class FactoryTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
+     * @covers Brera\Lib\Queue\Factory::getNewRepository
      */
     public function itShouldAlwaysReturnANewRepositoryInstance()
     {
@@ -54,6 +66,7 @@ class FactoryTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
+     * @covers Brera\Lib\Queue\Factory::getRegisteredConfigInstance
      */
     public function itShouldReturnTheConfigInstanceFromTheRepository()
     {
@@ -66,6 +79,7 @@ class FactoryTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
+     * @covers Brera\Lib\Queue\Factory::getNewConfig
      */
     public function itShouldReturnAConfigInstance()
     {
@@ -75,6 +89,7 @@ class FactoryTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
+     * @covers Brera\Lib\Queue\Factory::getConsumerQueue
      */
     public function itShouldReturnAConsumerQueue()
     {
@@ -86,6 +101,7 @@ class FactoryTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
+     * @covers Brera\Lib\Queue\Factory::getProducerQueue
      */
     public function itShouldReturnAProducerQueue()
     {
@@ -97,6 +113,7 @@ class FactoryTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
+     * @covers Brera\Lib\Queue\Factory::getOutgoingMessage
      */
     public function itShouldReturnAnOutgoingMessage()
     {
@@ -106,6 +123,7 @@ class FactoryTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
+     * @covers Brera\Lib\Queue\Factory::getIncomingMessage
      */
     public function itShouldReturnAnIncomingMessage()
     {
@@ -115,6 +133,7 @@ class FactoryTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
+     * @covers Brera\Lib\Queue\Factory::getMessageBuilder
      */
     public function itShouldReturnAMessageBuilderInstance()
     {
@@ -124,6 +143,7 @@ class FactoryTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
+     * @covers Brera\Lib\Queue\Factory::getNewBackendFactory
      */
     public function itShouldReturnABackendFactoryInstance()
     {
@@ -137,6 +157,7 @@ class FactoryTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
+     * @covers Brera\Lib\Queue\Factory::getRegisteredBackendFactoryInstance
      */
     public function itShouldReturnTheBackendFactoryFromTheRepository()
     {
@@ -148,6 +169,7 @@ class FactoryTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
+     * @covers Brera\Lib\Queue\Factory::getRegisteredBackendConfigInstance
      */
     public function itShouldReturnTheRegisteredBackendConfigInstance()
     {
@@ -156,8 +178,6 @@ class FactoryTest extends \PHPUnit_Framework_TestCase
         $result = $this->factory->getRegisteredBackendConfigInstance();
         $this->assertSame($stubBackendConfig, $result);
     }
-    
-    
 
     /**
      * @param string $class

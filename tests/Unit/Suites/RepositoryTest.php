@@ -25,6 +25,16 @@ class RepositoryTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
+     * @covers Brera\Lib\Queue\Repository::__construct
+     */
+    public function dummyTestToAchieveConstructorCoverage()
+    {
+        $this->assertInstanceOf('Brera\Lib\Queue\RepositoryInterface', $this->repository);
+    }
+
+    /**
+     * @test
+     * @covers Brera\Lib\Queue\Repository::getConfig
      */
     public function itShouldReturnAConfigInstance()
     {
@@ -35,6 +45,7 @@ class RepositoryTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
+     * @covers Brera\Lib\Queue\Repository::getConfig
      */
     public function itShouldAlwaysReturnTheSameConfigInstance()
     {
@@ -46,6 +57,7 @@ class RepositoryTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
+     * @covers Brera\Lib\Queue\Repository::getBackendFactory
      */
     public function itShouldReturnABackendFactory()
     {
@@ -56,6 +68,7 @@ class RepositoryTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
+     * @covers Brera\Lib\Queue\Repository::getBackendFactory
      */
     public function itShouldAlwaysReturnTheSameBackendFactoryInstance()
     {
@@ -67,6 +80,7 @@ class RepositoryTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
+     * @covers Brera\Lib\Queue\Repository::getProducerAdapter
      */
     public function itShouldReturnAProducerAdapter()
     {
@@ -79,6 +93,7 @@ class RepositoryTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
+     * @covers Brera\Lib\Queue\Repository::getProducerAdapter
      */
     public function itShouldAlwaysReturnTheSameProducerAdapter()
     {
@@ -91,6 +106,7 @@ class RepositoryTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
+     * @covers Brera\Lib\Queue\Repository::getConsumerAdapter
      */
     public function itShouldReturnAConsumerAdapter()
     {
@@ -103,6 +119,7 @@ class RepositoryTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
+     * @covers Brera\Lib\Queue\Repository::getConsumerAdapter
      */
     public function itShouldAlwaysReturnTheSameConsumerAdapter()
     {
@@ -115,6 +132,7 @@ class RepositoryTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
+     * @covers Brera\Lib\Queue\Repository::getBackendConfig
      */
     public function itShouldReturnABackendConfigInstance()
     {
@@ -126,6 +144,7 @@ class RepositoryTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
+     * @covers Brera\Lib\Queue\Repository::getBackendConfig
      */
     public function itShouldAlwaysReturnTheSameBackendConfigInstance()
     {
@@ -138,6 +157,7 @@ class RepositoryTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
+     * @covers Brera\Lib\Queue\Repository::getConfiguredBackendFactoryClass
      */
     public function itShouldReturnTheBackendFactoryClassNameFromTheConfig()
     {

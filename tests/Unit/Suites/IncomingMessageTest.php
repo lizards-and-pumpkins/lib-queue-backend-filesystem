@@ -16,6 +16,7 @@ class IncomingMessageTest extends MessageTestAbstract
 
     /**
      * @test
+     * @covers Brera\Lib\Queue\IncomingMessage::__construct
      */
     public function itShouldImplementTheIncomingMessageInterface()
     {

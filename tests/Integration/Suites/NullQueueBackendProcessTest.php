@@ -17,7 +17,10 @@ class BootstrapQueueTest extends \PHPUnit_Framework_TestCase
     {
         $this->factory = new Factory();
     }
-    
+
+    /**
+     * @coversNothing
+     */
     public function testBootstrapAndProcessFlowWithNullBackend()
     {
         $config = $this->factory->getRegisteredConfigInstance();
@@ -45,7 +48,10 @@ class BootstrapQueueTest extends \PHPUnit_Framework_TestCase
         $consumerQueue->setMessageAsProcessed($incomingMessage);
         
     }
-    
+
+    /**
+     * @coversNothing
+     */
     public function testTheRegisteredBackendConfigInstanceIsSetOnTheBackendFactory()
     {
         /** @var NullConfig $backendConfig */

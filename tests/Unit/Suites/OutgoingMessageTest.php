@@ -16,6 +16,7 @@ class OutgoingMessageTest extends MessageTestAbstract
 
     /**
      * @test
+     * @covers Brera\Lib\Queue\OutgoingMessage::__construct
      */
     public function itShouldImplementTheOutgoingMessageInterface()
     {

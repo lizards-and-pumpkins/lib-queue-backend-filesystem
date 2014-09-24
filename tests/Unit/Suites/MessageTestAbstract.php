@@ -19,6 +19,7 @@ abstract class MessageTestAbstract extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
+     * @covers Brera\Lib\Queue\AbstractMessage::getIdentifier
      */
     public function itShouldReturnTheMessageIdentifier()
     {
@@ -27,6 +28,7 @@ abstract class MessageTestAbstract extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
+     * @covers Brera\Lib\Queue\AbstractMessage::getPayload
      */
     public function itShouldReturnThePayload()
     {
@@ -35,6 +37,7 @@ abstract class MessageTestAbstract extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
+     * @covers Brera\Lib\Queue\AbstractMessage::getChannel
      */
     public function itShouldReturnTheChannelName()
     {

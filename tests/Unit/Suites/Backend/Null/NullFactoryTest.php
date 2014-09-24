@@ -25,6 +25,7 @@ class NullFactoryTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
+     * @coversNothing
      */
     public function itShouldExtendTheAbstractBackendFactory()
     {
@@ -33,6 +34,7 @@ class NullFactoryTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
+     * @covers Brera\Lib\Queue\Backend\Null\NullFactory::getNewBackendConfig
      */
     public function itShouldReturnANullConfigInstance()
     {
@@ -42,6 +44,7 @@ class NullFactoryTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
+     * @covers Brera\Lib\Queue\Backend\Null\NullFactory::getConsumerAdapter
      */
     public function itShouldReturnANullConsumerAdapter()
     {
@@ -52,6 +55,7 @@ class NullFactoryTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
+     * @covers Brera\Lib\Queue\Backend\Null\NullFactory::getProducerAdapter
      */
     public function itShouldReturnANullProducerAdapter()
     {

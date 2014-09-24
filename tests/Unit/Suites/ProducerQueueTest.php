@@ -26,6 +26,16 @@ class ProducerQueueTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
+     * @covers Brera\Lib\Queue\ProducerQueue::__construct
+     */
+    public function itShouldImplementTheProducerQueueInterface()
+    {
+        $this->assertInstanceOf('Brera\Lib\Queue\ProducerQueueInterface', $this->queue);
+    }
+
+    /**
+     * @test
+     * @covers Brera\Lib\Queue\ProducerQueue::sendMessageByChannel
      */
     public function itShouldDelegateToTheAdapterToSendAMessage()
     {
@@ -36,6 +46,7 @@ class ProducerQueueTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
+     * @covers Brera\Lib\Queue\ProducerQueue::sendMessageByChannel
      */
     public function itShouldReturnAnOutgoingMessage()
     {
@@ -50,6 +61,7 @@ class ProducerQueueTest extends \PHPUnit_Framework_TestCase
     
     /**
      * @test
+     * @covers Brera\Lib\Queue\ProducerQueue::getMessagePayload
      */
     public function itShouldReturnAMessagePayload()
     {
