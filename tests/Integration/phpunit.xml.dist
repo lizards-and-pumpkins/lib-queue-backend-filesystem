@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <phpunit bootstrap="bootstrap.php">
-    <testsuite name="Brera Queue Backend Library for RabbitMQ Integration Tests">
+    <testsuite name="Brera Queue Backend Library for NullQueue and FileQueue Integration Tests">
         <directory>.</directory>
     </testsuite>
 </phpunit>
