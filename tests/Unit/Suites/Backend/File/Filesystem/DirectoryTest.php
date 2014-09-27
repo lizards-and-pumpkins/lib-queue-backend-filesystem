@@ -67,19 +67,6 @@ class DirectoryTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @covers Brera\Lib\Queue\Backend\File\Filesystem\Directory::createDirRecursivelyIfNotExists
-     * @expectedException \Exception
-     * @expectedExceptionMessage Failed to create a directory.
-     */
-    public function testExceptionIsThrownIfFailsToCreateADir()
-    {
-        vfsStream::newDirectory('foo', 0)->at($this->root);
-        $path = 'vfsRoot' . DIRECTORY_SEPARATOR . 'foo' . DIRECTORY_SEPARATOR . 'bar';
-        $this->directory->createDirRecursivelyIfNotExists(vfsStream::url($path));
-    }
-
-    /**
-     * @test
      * @covers Brera\Lib\Queue\Backend\File\Filesystem\Directory::getNameOfOldestFileInDir
      */
     public function testItReturnsFirstFileInAlphabeticalOrderInADir()

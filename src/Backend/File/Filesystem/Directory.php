@@ -14,12 +14,8 @@ class Directory
 
         if (!file_exists($dirPath)) {
             $oldMask = umask(0);
-            $result = mkdir($dirPath, $this->newDirectoryMode, true);
+            mkdir($dirPath, $this->newDirectoryMode, true);
             umask($oldMask);
-
-            if (!$result) {
-                throw new \Exception('Failed to create a directory.');
-            }
         }
     }
 
