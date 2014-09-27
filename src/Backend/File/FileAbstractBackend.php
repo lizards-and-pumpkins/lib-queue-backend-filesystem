@@ -55,7 +55,8 @@ abstract class FileAbstractBackend
         }
 
         if (!is_resource($this->lockFilePointer)) {
-            $this->lockFilePointer = fopen($this->config->getStorageRootDir() . DIRECTORY_SEPARATOR . 'lock.txt', 'w+');
+            $channelPath = $this->config->getStorageRootDir() . DIRECTORY_SEPARATOR . $channelName;
+            $this->lockFilePointer = fopen($channelPath . DIRECTORY_SEPARATOR . 'lock', 'w+');
         }
     }
 
