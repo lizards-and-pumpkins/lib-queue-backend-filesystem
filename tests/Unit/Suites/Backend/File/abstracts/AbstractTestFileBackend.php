@@ -4,9 +4,7 @@ namespace Brera\Lib\Queue\Tests\Unit;
 
 require_once __DIR__ . '/AbstractTestBase.php';
 
-use Brera\Lib\Queue\Backend\File\FileAbstractBackend,
-    org\bovigo\vfs\vfsStream,
-    org\bovigo\vfs\vfsStreamDirectory;
+use Brera\Lib\Queue\Backend\File\FileAbstractBackend;
 
 /**
  * Class AbstractTestFileBackend
@@ -16,11 +14,6 @@ use Brera\Lib\Queue\Backend\File\FileAbstractBackend,
  */
 class AbstractTestFileBackend extends AbstractTestBase
 {
-    /**
-     * @var vfsStreamDirectory
-     */
-    protected $root;
-
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject
      */
@@ -43,7 +36,6 @@ class AbstractTestFileBackend extends AbstractTestBase
 
     public function setUp()
     {
-        $this->root = vfsStream::setup('vfsRoot');
         $this->config = $this->getStubFileConfig();
         $this->directory = $this->getStubFilesystemDirectory();
         $this->file = $this->getStubFilesystemFile();
