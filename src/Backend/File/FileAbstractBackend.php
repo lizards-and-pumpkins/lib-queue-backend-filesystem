@@ -11,10 +11,19 @@ abstract class FileAbstractBackend
     const STATE_PROCESSING = 'processing';
     const STATE_COMPLETED = 'completed';
 
+    /**
+     * @var FileConfig
+     */
     protected $config;
 
+    /**
+     * @var Directory
+     */
     protected $directory;
 
+    /**
+     * @var File
+     */
     protected $file;
 
     protected $initializedChannels = array();
