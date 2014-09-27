@@ -2,8 +2,8 @@
 
 namespace Brera\Lib\Queue\Tests\Integration;
 
-use Brera\Lib\Queue\Backend\File\FileAbstractBackend;
-use Brera\Lib\Queue\Backend\File\FileConfig,
+use Brera\Lib\Queue\Backend\File\FileAbstractBackend,
+    Brera\Lib\Queue\Backend\File\FileConfig,
     Brera\Lib\Queue\Backend\File\FileFactory,
     Brera\Lib\Queue\Factory;
 
@@ -14,11 +14,12 @@ class FileQueueBackendProcessTest extends \PHPUnit_Framework_TestCase
      */
     private $factory;
 
-    private $tempDir = './tmp';
+    private $tempDir;
 
     public function setUp()
     {
         $this->factory = new Factory();
+        $this->tempDir = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'brera-lib-queue-file';
     }
 
     public function tearDown()
