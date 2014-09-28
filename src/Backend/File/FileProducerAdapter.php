@@ -13,15 +13,6 @@ class FileProducerAdapter extends AbstractProducerAdapter
 
     public function sendMessageToBackend($channelName, $payload)
     {
-        $this->backendImplementation->checkIfChannelIsInitialized($channelName);
-
-        $this->backendImplementation->lock();
-
-        $messageIdentifier = $this->backendImplementation->getNewMessageIdentifier($channelName);
-        $this->backendImplementation->writeMessage($messageIdentifier, $payload);
-
-        $this->backendImplementation->unlock();
-
-        return $messageIdentifier;
+        return $this->backendImplementation->addMessageToQueue($channelName, $payload);
     }
 }

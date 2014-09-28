@@ -27,4 +27,22 @@ class AbstractTestBase extends \PHPUnit_Framework_TestCase
             ->getMock();
         return $stubFactory;
     }
+
+    protected function getStubMessage($channelName, $payload, $identifier)
+    {
+        $stubMessage = $this->getMockBuilder('Brera\Lib\Queue\IncomingMessage')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $stubMessage->expects($this->any())
+            ->method('getChannel')
+            ->will($this->returnValue($channelName));
+        $stubMessage->expects($this->any())
+            ->method('getPayload')
+            ->will($this->returnValue($payload));
+        $stubMessage->expects($this->any())
+            ->method('getIdentifier')
+            ->will($this->returnValue($identifier));
+
+        return $stubMessage;
+    }
 }

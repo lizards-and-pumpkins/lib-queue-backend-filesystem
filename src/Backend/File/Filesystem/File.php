@@ -45,4 +45,21 @@ class File
 
         return $result;
     }
+
+    public function getNewFileHandle($filePath)
+    {
+        $handle = fopen($filePath, 'w+');
+
+        return $handle;
+    }
+
+    public function lock($filePath)
+    {
+        flock($filePath, LOCK_EX);
+    }
+
+    public function unlock($filePath)
+    {
+        flock($filePath, LOCK_UN);
+    }
 }

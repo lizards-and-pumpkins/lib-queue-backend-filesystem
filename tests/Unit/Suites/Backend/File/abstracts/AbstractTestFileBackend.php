@@ -84,7 +84,7 @@ class AbstractTestFileBackend extends AbstractTestBase
         return $stubFilesystemFile;
     }
 
-    private function addStorageDirToStubFactory($dirPath)
+    protected function addStorageDirToStubFactory($dirPath)
     {
         $this->config->expects($this->any())
             ->method('getStorageRootDir')

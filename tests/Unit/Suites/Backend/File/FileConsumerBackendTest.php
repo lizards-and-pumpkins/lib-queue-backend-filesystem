@@ -19,40 +19,53 @@ class FileConsumerBackendTest extends AbstractTestFileBackend
      */
     protected $backend;
 
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $messageBuilder;
+
     public function setUp()
     {
         parent::setUp();
 
-        $this->backend = new FileConsumerBackend($this->config, $this->directory, $this->file);
+        $this->messageBuilder = $this->getStubMessageBuilder();
+        $this->backend = new FileConsumerBackend($this->config, $this->messageBuilder, $this->directory, $this->file);
     }
 
     /**
      * @test
-     * @covers Brera\Lib\Queue\Backend\File\FileConsumerBackend::getNextMessageIdentifier
+     * @covers Brera\Lib\Queue\Backend\File\FileConsumerBackend::getMessageFromQueue
      */
-    public function itShouldDelegateToTheFilesystemFileToGetAnOldestFileInQueue()
+    public function testItGetsAnIncomingMessage()
     {
+        $this->addStorageDirToStubFactory('/tmp');
+
         $this->directory->expects($this->any())
             ->method('getNameOfOldestFileInDir')
             ->will($this->returnValue('foo'));
 
-        $this->addMoveFileToFilesystemFile('/test-channel/processing/foo');
-        $result = $this->backend->getNextMessageIdentifier('test-channel');
+        $message = $this->getStubMessage('test-channel', 'test-message', '/tmp/test-channel/processing/foo');
 
-        $this->assertEquals('/test-channel/processing/foo', $result);
+        $this->messageBuilder->expects($this->any())
+            ->method('getIncomingMessage')
+            ->will($this->returnValue($message));
+
+        $result = $this->backend->getMessageFromQueue('test-channel');
+
+        $this->assertEquals('test-channel', $result->getChannel());
+        $this->assertEquals('test-message', $result->getPayload());
+        $this->assertEquals('/tmp/test-channel/processing/foo', $result->getIdentifier());
     }
 
     /**
      * @test
-     * @covers Brera\Lib\Queue\Backend\File\FileConsumerBackend::readMessage
+     * @covers Brera\Lib\Queue\Backend\File\FileConsumerBackend::setMessageAsProcessed
      */
-    public function itShouldDelegateToTheFilesystemFileToReadFile()
+    public function testItMovesMessageIntoProcessedState()
     {
-        $this->file->expects($this->any())
-            ->method('readFile')
-            ->will($this->returnValue('test-message'));
-
-        $result = $this->backend->readMessage('/dev/null/test-channel/processing/foo');
-        $this->assertEquals('test-message', $result);
+        $this->addStorageDirToStubFactory('/tmp');
+        $this->addMoveFileToFilesystemFile('/tmp/test-channel/complete/foo');
+        $message = $this->getStubMessage('test-channel', 'test-message', '/tmp/test-channel/processing/foo');
+        $this->backend->setMessageAsProcessed($message);
     }
 }

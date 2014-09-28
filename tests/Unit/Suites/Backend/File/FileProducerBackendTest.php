@@ -28,10 +28,12 @@ class FileProducerBackendTest extends AbstractTestFileBackend
 
     /**
      * @test
-     * @covers Brera\Lib\Queue\Backend\File\FileProducerBackend::getNewMessageIdentifier
+     * @covers Brera\Lib\Queue\Backend\File\FileProducerBackend::addMessageToQueue
      */
-    public function itShouldDelegateToFilesystemFileToGenerateUniqueFilePath()
+    public function testItReturnsAMessageIdentifier()
     {
+        $this->addStorageDirToStubFactory('/tmp');
+
         $this->file->expects($this->any())
             ->method('getNewBaseFilename')
             ->will($this->returnValue('foo'));
@@ -40,20 +42,7 @@ class FileProducerBackendTest extends AbstractTestFileBackend
             ->method('getUniqueFilename')
             ->will($this->returnValue('foo'));
 
-        $result = $this->backend->getNewMessageIdentifier('test-channel');
-        $this->assertEquals('/test-channel/pending/foo', $result);
-    }
-
-    /**
-     * @test
-     * @covers Brera\Lib\Queue\Backend\File\FileProducerBackend::writeMessage
-     */
-    public function itShouldDelegateToTheFilesystemFileToWriteFile()
-    {
-        $this->file->expects($this->any())
-            ->method('writeFile')
-            ->will($this->returnValue(true));
-
-        $this->backend->writeMessage('/dev/null/test-channel/state/foo', 'test-message');
+        $result = $this->backend->addMessageToQueue('test-channel', 'test-message');
+        $this->assertEquals('/tmp/test-channel/pending/foo', $result);
     }
 }

@@ -41,14 +41,11 @@ class FileProducerAdapterTest extends AbstractTestFileAdapter
     public function itShouldSendAMessageViaTheBackendImplementation()
     {
         $this->stubBackendImplementation->expects($this->any())
-            ->method('getNewMessageIdentifier')
+            ->method('addMessageToQueue')
             ->will($this->returnValue('/dev/null/test-channel/pending/foo'));
-
-        $this->stubBackendImplementation->expects($this->any())
-            ->method('writeMessage')
-            ->will($this->returnValue(true));
-
+        
         $result = $this->adapter->sendMessageToBackend('test-channel', 'test-message');
+
         $this->assertEquals('/dev/null/test-channel/pending/foo', $result);
     }
 }

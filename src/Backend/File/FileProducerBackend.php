@@ -2,9 +2,33 @@
 
 namespace Brera\Lib\Queue\Backend\File;
 
+use Brera\Lib\Queue\Backend\File\Filesystem\Directory,
+    Brera\Lib\Queue\Backend\File\Filesystem\File;
+
 class FileProducerBackend extends FileAbstractBackend
 {
-    public function getNewMessageIdentifier($channelName)
+    public function __construct(FileConfig $config, Directory $directory, File $file)
+    {
+        $this->config = $config;
+        $this->directory = $directory;
+        $this->file = $file;
+    }
+
+    public function addMessageToQueue($channelName, $payload)
+    {
+        $this->checkIfChannelIsInitialized($channelName);
+
+        $this->file->lock($this->lockFilePointer);
+
+        $messageIdentifier = $this->getNewMessageIdentifier($channelName);
+        $this->writeMessage($messageIdentifier, $payload);
+
+        $this->file->unlock($this->lockFilePointer);
+
+        return $messageIdentifier;
+    }
+
+    protected function getNewMessageIdentifier($channelName)
     {
         $globPattern = $this->getMessageStateDir($channelName, '*');
 
@@ -15,7 +39,7 @@ class FileProducerBackend extends FileAbstractBackend
         return $filePath;
     }
 
-    public function writeMessage($messageIdentifier, $data)
+    protected function writeMessage($messageIdentifier, $data)
     {
         $this->file->writeFile($messageIdentifier, $data);
     }

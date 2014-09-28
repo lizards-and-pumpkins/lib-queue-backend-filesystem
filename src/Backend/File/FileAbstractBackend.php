@@ -30,13 +30,6 @@ abstract class FileAbstractBackend
 
     protected $lockFilePointer;
 
-    public function __construct(FileConfig $config, Directory $directory, File $file)
-    {
-        $this->config = $config;
-        $this->directory = $directory;
-        $this->file = $file;
-    }
-
     public function checkIfChannelIsInitialized($channelName)
     {
         if (!in_array($channelName, $this->initializedChannels)) {
@@ -56,18 +49,8 @@ abstract class FileAbstractBackend
 
         if (!is_resource($this->lockFilePointer)) {
             $channelPath = $this->config->getStorageRootDir() . DIRECTORY_SEPARATOR . $channelName;
-            $this->lockFilePointer = fopen($channelPath . DIRECTORY_SEPARATOR . 'lock', 'w+');
+            $this->lockFilePointer = $this->file->getNewFileHandle($channelPath . DIRECTORY_SEPARATOR . 'lock');
         }
-    }
-
-    public function lock()
-    {
-        flock($this->lockFilePointer, LOCK_EX);
-    }
-
-    public function unlock()
-    {
-        flock($this->lockFilePointer, LOCK_UN);
     }
 
     public function changeMessageState($channelName, $filePath, $newState)

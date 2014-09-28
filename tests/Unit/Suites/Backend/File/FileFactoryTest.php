@@ -69,6 +69,7 @@ class FileFactoryTest extends AbstractTestBase
      */
     public function itShouldReturnAConsumerBackendImplementation()
     {
+        $this->setStubMessageBuilderOnStubFactory();
         $result = $this->backendFactory->getConsumerBackend();
         $this->assertInstanceOf('Brera\Lib\Queue\Backend\File\FileConsumerBackend', $result);
     }

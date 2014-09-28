@@ -105,4 +105,16 @@ class FileTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals($data, $result);
     }
+
+    /**
+     * @test
+     * @covers Brera\Lib\Queue\Backend\File\Filesystem\File::getNewFileHandle
+     */
+    public function testItReturnsNewFileHandle()
+    {
+        $path = vfsStream::url('vfsRoot' . DIRECTORY_SEPARATOR . 'foo');
+        $handle = $this->file->getNewFileHandle($path);
+
+        $this->assertTrue(is_resource($handle));
+    }
 }
