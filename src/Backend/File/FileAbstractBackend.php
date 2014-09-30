@@ -3,7 +3,8 @@
 namespace Brera\Lib\Queue\Backend\File;
 
 use Brera\Lib\Queue\Backend\File\Filesystem\Directory,
-    Brera\Lib\Queue\Backend\File\Filesystem\File;
+    Brera\Lib\Queue\Backend\File\Filesystem\File,
+    Brera\Lib\Queue\Backend\File\Exception\RuntimeException;
 
 abstract class FileAbstractBackend
 {
@@ -70,7 +71,7 @@ abstract class FileAbstractBackend
     protected function checkConfig()
     {
         if (!$this->config->getStorageRootDir()) {
-            throw new \Exception('Root storage path is not set.');
+            throw new RuntimeException('Root storage path is not set.');
         }
     }
 }

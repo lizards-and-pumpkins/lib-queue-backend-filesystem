@@ -4,7 +4,8 @@ namespace Brera\Lib\Queue\Tests\Unit;
 
 require_once __DIR__ . '/AbstractTestBase.php';
 
-use Brera\Lib\Queue\Backend\File\FileAbstractBackend;
+use Brera\Lib\Queue\Backend\File\FileAbstractBackend,
+    Brera\Lib\Queue\Backend\File\Exception\RuntimeException;
 
 /**
  * Class AbstractTestFileBackend
@@ -44,7 +45,7 @@ class AbstractTestFileBackend extends AbstractTestBase
     /**
      * @test
      * @covers Brera\Lib\Queue\Backend\File\FileAbstractBackend::checkIfChannelIsInitialized
-     * @expectedException \Exception
+     * @expectedException RuntimeException
      * @expectedExceptionMessage Root storage path is not set.
      */
     public function testItThrowsAnExceptionIfStorageRootIsNotSet()

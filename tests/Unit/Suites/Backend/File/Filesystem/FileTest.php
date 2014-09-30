@@ -3,6 +3,7 @@
 namespace Brera\Lib\Queue\Tests\Unit\Backend\File;
 
 use Brera\Lib\Queue\Backend\File\Filesystem\File,
+    Brera\Lib\Queue\Backend\File\Exception\RuntimeException,
     org\bovigo\vfs\vfsStream,
     org\bovigo\vfs\vfsStreamDirectory;
 
@@ -70,7 +71,7 @@ class FileTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      * @covers Brera\Lib\Queue\Backend\File\Filesystem\File::moveFile
-     * @expectedException \Exception
+     * @expectedException RuntimeException
      * @expectedExceptionMessage Can not move the file.
      */
     public function testItFailsToMoveAFile()

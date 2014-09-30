@@ -2,6 +2,8 @@
 
 namespace Brera\Lib\Queue\Backend\File\Filesystem;
 
+use Brera\Lib\Queue\Backend\File\Exception\RuntimeException;
+
 class File
 {
     public function getNewBaseFilename()
@@ -23,7 +25,7 @@ class File
     public function moveFile($currentPath, $newPath)
     {
         if (!is_writable($currentPath) || !is_dir($newPath) || !is_writable($newPath)) {
-            throw new \Exception('Can not move the file.');
+            throw new RuntimeException('Can not move the file.');
         }
 
         $newPath = rtrim($newPath, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
@@ -35,7 +37,7 @@ class File
     public function writeFile($filePath, $data)
     {
         if (false === file_put_contents($filePath, $data, LOCK_EX)) {
-           throw new \Exception('Failed writing a file.');
+           throw new RuntimeException('Failed writing a file.');
         }
     }
 

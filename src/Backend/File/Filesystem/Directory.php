@@ -2,6 +2,8 @@
 
 namespace Brera\Lib\Queue\Backend\File\Filesystem;
 
+use Brera\Lib\Queue\Backend\File\Exception\RuntimeException;
+
 class Directory
 {
     protected $newDirectoryMode = 0755;
@@ -9,7 +11,7 @@ class Directory
     public function createDirRecursivelyIfNotExists($dirPath)
     {
         if (file_exists($dirPath) && !is_dir($dirPath)) {
-            throw new \Exception('Path already exists but is not a directory.');
+            throw new RuntimeException('Path already exists but is not a directory.');
         }
 
         if (!file_exists($dirPath)) {

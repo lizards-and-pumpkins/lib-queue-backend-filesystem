@@ -3,6 +3,7 @@
 namespace Brera\Lib\Queue\Tests\Unit\Backend\File;
 
 use Brera\Lib\Queue\Backend\File\Filesystem\Directory,
+    Brera\Lib\Queue\Backend\File\Exception\RuntimeException,
     org\bovigo\vfs\vfsStream,
     org\bovigo\vfs\vfsStreamDirectory;
 
@@ -55,7 +56,7 @@ class DirectoryTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      * @covers Brera\Lib\Queue\Backend\File\Filesystem\Directory::createDirRecursivelyIfNotExists
-     * @expectedException \Exception
+     * @expectedException RuntimeException
      * @expectedExceptionMessage Path already exists but is not a directory.
      */
     public function testExceptionIsThrownIfPathExistsButItIsNotADir()
