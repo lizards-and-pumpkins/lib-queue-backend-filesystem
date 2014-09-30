@@ -67,9 +67,6 @@ abstract class FileAbstractBackend
         return $messageStateDir;
     }
 
-    /**
-     * Do all required configuration checks
-     */
     protected function checkConfig()
     {
         if (!$this->config->getStorageRootDir()) {
