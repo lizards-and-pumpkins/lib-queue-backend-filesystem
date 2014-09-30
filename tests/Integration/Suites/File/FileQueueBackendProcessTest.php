@@ -43,6 +43,7 @@ class FileQueueBackendProcessTest extends \PHPUnit_Framework_TestCase
         /** @var \Brera\Lib\Queue\Backend\File\FileConfig $backendConfig */
         $backendConfig = $this->factory->getRegisteredBackendConfigInstance();
         $backendConfig->setStorageRootDir($this->tempDir);
+        $backendConfig->setKeepProcessedMessages(true);
         $this->assertInstanceOf('Brera\Lib\Queue\Backend\File\FileConfig', $backendConfig);
         
         $producerQueue = $this->factory->getProducerQueue();
