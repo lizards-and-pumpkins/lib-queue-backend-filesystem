@@ -61,9 +61,8 @@ class DirectoryTest extends \PHPUnit_Framework_TestCase
      */
     public function testExceptionIsThrownIfPathExistsButItIsNotADir()
     {
-        vfsStream::newFile('foo')->at($this->root);
-        $path = 'vfsRoot' . DIRECTORY_SEPARATOR . 'foo';
-        $this->directory->createDirRecursivelyIfNotExists(vfsStream::url($path));
+        $file = vfsStream::newFile('foo')->at($this->root);
+        $this->directory->createDirRecursivelyIfNotExists($file->url());
     }
 
     /**
@@ -74,7 +73,7 @@ class DirectoryTest extends \PHPUnit_Framework_TestCase
     {
         vfsStream::newFile('foo')->at($this->root);
         vfsStream::newFile('bar')->at($this->root);
-        $result = $this->directory->getNameOfOldestFileInDir(vfsStream::url('vfsRoot'));
+        $result = $this->directory->getNameOfOldestFileInDir($this->root->url());
         $this->assertEquals('bar', $result);
     }
 
@@ -84,7 +83,7 @@ class DirectoryTest extends \PHPUnit_Framework_TestCase
      */
     public function testItReturnsAnEmptyStringIfDirIsEmpty()
     {
-        $result = $this->directory->getNameOfOldestFileInDir(vfsStream::url('vfsRoot'));
+        $result = $this->directory->getNameOfOldestFileInDir($this->root->url());
         $this->assertEquals('', $result);
     }
 }

@@ -56,16 +56,14 @@ class FileTest extends \PHPUnit_Framework_TestCase
      */
     public function testItMovesAFile()
     {
-        $dirStream = vfsStream::newDirectory('bar')->at($this->root);
-        vfsStream::newFile('foo')->at($dirStream);
-        vfsStream::newDirectory('baz')->at($this->root);
+        $currentDirectory = vfsStream::newDirectory('bar')->at($this->root);
+        $file = vfsStream::newFile('foo')->at($currentDirectory);
+        $newDirectory = vfsStream::newDirectory('baz')->at($this->root);
 
-        $currentPath = vfsStream::url('vfsRoot' . DIRECTORY_SEPARATOR . 'bar' . DIRECTORY_SEPARATOR . 'foo');
-        $newPath = vfsStream::url('vfsRoot' . DIRECTORY_SEPARATOR . 'baz');
-        $this->file->moveFile($currentPath, $newPath, 'foo');
+        $this->file->moveFile($file->url(), $newDirectory->url(), 'foo');
 
-        $this->assertTrue(file_exists($newPath . DIRECTORY_SEPARATOR . 'foo'));
-        $this->assertFalse(file_exists($currentPath));
+        $this->assertTrue(file_exists($newDirectory->url() . DIRECTORY_SEPARATOR . 'foo'));
+        $this->assertFalse(file_exists($currentDirectory->url() . DIRECTORY_SEPARATOR . 'foo'));
     }
 
     /**
@@ -76,12 +74,11 @@ class FileTest extends \PHPUnit_Framework_TestCase
      */
     public function testItFailsToMoveAFile()
     {
-        $dirStream = vfsStream::newDirectory('bar')->at($this->root);
-        vfsStream::newFile('foo')->at($dirStream);
+        $currentDirectory = vfsStream::newDirectory('bar')->at($this->root);
+        $file = vfsStream::newFile('foo')->at($currentDirectory);
 
-        $currentPath = vfsStream::url('vfsRoot' . DIRECTORY_SEPARATOR . 'bar' . DIRECTORY_SEPARATOR . 'foo');
-        $newPath = vfsStream::url('vfsRoot' . DIRECTORY_SEPARATOR . 'baz');
-        $this->file->moveFile($currentPath, $newPath, 'foo');
+        $nonExistingPath = vfsStream::url('vfsRoot' . DIRECTORY_SEPARATOR . 'baz');
+        $this->file->moveFile($file->url(), $nonExistingPath, 'foo');
     }
 
     /**
@@ -100,9 +97,9 @@ class FileTest extends \PHPUnit_Framework_TestCase
     public function testItReturnsAFileContents()
     {
         $data = 'test-message';
-        $fileStream = vfsStream::newFile('foo')->at($this->root);
-        file_put_contents($fileStream->url(), $data);
-        $result = $this->file->readFile($fileStream->url());
+        $file = vfsStream::newFile('foo')->at($this->root);
+        file_put_contents($file->url(), $data);
+        $result = $this->file->readFile($file->url());
 
         $this->assertEquals($data, $result);
     }
