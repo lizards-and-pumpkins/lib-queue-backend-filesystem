@@ -42,8 +42,10 @@ abstract class FileAbstractBackend
             $processingStateDir = $this->getMessageStateDir($channelName, self::STATE_PROCESSING);
             $this->directory->createDirRecursivelyIfNotExists($processingStateDir);
 
-            $completedStateDir = $this->getMessageStateDir($channelName, self::STATE_COMPLETED);
-            $this->directory->createDirRecursivelyIfNotExists($completedStateDir);
+            if ($this->config->getKeepProcessedMessages()) {
+                $completedStateDir = $this->getMessageStateDir($channelName, self::STATE_COMPLETED);
+                $this->directory->createDirRecursivelyIfNotExists($completedStateDir);
+            }
 
             array_push($this->initializedChannels, $channelName);
         }
