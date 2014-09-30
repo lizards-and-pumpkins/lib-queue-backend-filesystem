@@ -113,7 +113,7 @@ class FileTest extends \PHPUnit_Framework_TestCase
     public function testItReturnsNewFileHandle()
     {
         $path = vfsStream::url('vfsRoot' . DIRECTORY_SEPARATOR . 'foo');
-        $handle = $this->file->getNewFileHandle($path);
+        $handle = $this->file->getNewFileHandle($path, 'w+');
 
         $this->assertTrue(is_resource($handle));
     }

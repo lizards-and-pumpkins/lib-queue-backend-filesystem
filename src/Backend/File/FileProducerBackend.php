@@ -18,12 +18,12 @@ class FileProducerBackend extends FileAbstractBackend
     {
         $this->checkIfChannelIsInitialized($channelName);
 
-        $this->file->lock($this->lockFilePointer);
+        $this->file->lock($this->lockFileHandle);
 
         $messageIdentifier = $this->getNewMessageIdentifier($channelName);
         $this->writeMessage($messageIdentifier, $payload);
 
-        $this->file->unlock($this->lockFilePointer);
+        $this->file->unlock($this->lockFileHandle);
 
         return $messageIdentifier;
     }

@@ -46,9 +46,9 @@ class File
         return $result;
     }
 
-    public function getNewFileHandle($filePath)
+    public function getNewFileHandle($filePath, $mode)
     {
-        $handle = fopen($filePath, 'w+');
+        $handle = fopen($filePath, $mode);
 
         return $handle;
     }

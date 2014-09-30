@@ -51,7 +51,7 @@ class FileConsumerBackend extends FileAbstractBackend
         $messageIdentifier = '';
         $pendingStateDir = $this->getMessageStateDir($channelName, self::STATE_PENDING);
 
-        $this->file->lock($this->lockFilePointer);
+        $this->file->lock($this->lockFileHandle);
 
         if ($fileName = $this->directory->getNameOfOldestFileInDir($pendingStateDir)) {
             $currentIdentifier = $pendingStateDir . DIRECTORY_SEPARATOR . $fileName;
@@ -61,7 +61,7 @@ class FileConsumerBackend extends FileAbstractBackend
             $messageIdentifier = $processingStateDir . DIRECTORY_SEPARATOR . $fileName;
         }
 
-        $this->file->unlock($this->lockFilePointer);
+        $this->file->unlock($this->lockFileHandle);
 
         return $messageIdentifier;
     }

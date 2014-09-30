@@ -28,7 +28,7 @@ abstract class FileAbstractBackend
 
     protected $initializedChannels = array();
 
-    protected $lockFilePointer;
+    protected $lockFileHandle;
 
     public function checkIfChannelIsInitialized($channelName)
     {
@@ -47,9 +47,9 @@ abstract class FileAbstractBackend
             array_push($this->initializedChannels, $channelName);
         }
 
-        if (!is_resource($this->lockFilePointer)) {
+        if (!is_resource($this->lockFileHandle)) {
             $channelPath = $this->config->getStorageRootDir() . DIRECTORY_SEPARATOR . $channelName;
-            $this->lockFilePointer = $this->file->getNewFileHandle($channelPath . DIRECTORY_SEPARATOR . 'lock');
+            $this->lockFileHandle = $this->file->getNewFileHandle($channelPath . DIRECTORY_SEPARATOR . 'lock', 'w+');
         }
     }
 
