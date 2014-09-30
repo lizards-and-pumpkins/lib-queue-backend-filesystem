@@ -55,6 +55,11 @@ class File
         return $handle;
     }
 
+    public function removeFile($filePath)
+    {
+        unlink($filePath);
+    }
+
     public function lock($filePath)
     {
         flock($filePath, LOCK_EX);

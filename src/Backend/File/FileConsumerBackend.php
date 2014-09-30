@@ -43,7 +43,11 @@ class FileConsumerBackend extends FileAbstractBackend
     {
         $channelName = $message->getChannel();
         $this->checkIfChannelIsInitialized($channelName);
-        $this->changeMessageState($channelName, $message->getIdentifier(), FileAbstractBackend::STATE_COMPLETED);
+        if ($this->config->getKeepProcessedMessages()) {
+            $this->changeMessageState($channelName, $message->getIdentifier(), FileAbstractBackend::STATE_COMPLETED);
+        } else {
+            $this->file->removeFile($message->getIdentifier());
+        }
     }
 
     protected function getNextMessageIdentifier($channelName)

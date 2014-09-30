@@ -40,4 +40,16 @@ class FileConfigTest extends \PHPUnit_Framework_TestCase
         $this->config->setStorageRootDir('/dev/null');
         $this->assertEquals('/dev/null', $this->config->getStorageRootDir());
     }
+
+    /**
+     * @test
+     * @covers Brera\Lib\Queue\Backend\File\FileConfig::setKeepProcessedMessages
+     * @covers Brera\Lib\Queue\Backend\File\FileConfig::getKeepProcessedMessages
+     */
+    public function testItReturnsKeepProcessedMessagesFlag()
+    {
+        $this->assertFalse($this->config->getKeepProcessedMessages());
+        $this->config->setKeepProcessedMessages(true);
+        $this->assertTrue($this->config->getKeepProcessedMessages());
+    }
 }

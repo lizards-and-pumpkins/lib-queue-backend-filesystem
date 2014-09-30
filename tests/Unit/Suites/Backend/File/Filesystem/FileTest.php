@@ -118,4 +118,15 @@ class FileTest extends \PHPUnit_Framework_TestCase
 
         $this->assertTrue(is_resource($handle));
     }
+
+    /**
+     * @test
+     * @covers Brera\Lib\Queue\Backend\File\Filesystem\File::removeFile
+     */
+    public function testFileIsRemoved()
+    {
+        $file = vfsStream::newFile('foo')->at($this->root);
+        $this->file->removeFile($file->url());
+        $this->assertFalse(file_exists($file->url()));
+    }
 }
