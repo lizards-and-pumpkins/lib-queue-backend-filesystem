@@ -17,11 +17,19 @@ class FileConsumerAdapter extends AbstractConsumerAdapter
         return $this->backendImplementation->getMessageFromQueue($channelName);
     }
 
+    /**
+     * @param IncomingMessageInterface $message
+     * @return string
+     */
     protected function getPayloadFromBackendMessage($message)
     {
         return $message->getPayload();
     }
 
+    /**
+     * @param IncomingMessageInterface $message
+     * @return string
+     */
     protected function getIdentifierFromBackendMessage($message)
     {
         return $message->getIdentifier();
