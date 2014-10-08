@@ -9,12 +9,12 @@ abstract class QueueFactoryTestAbstract extends \PHPUnit_Framework_TestCase
     /**
      * @var AbstractQueueFactory
      */
-    private $factory;
+    protected $factory;
 
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject
      */
-    private $stubRepository;
+    protected $stubRepository;
 
     public function setUp()
     {
@@ -30,7 +30,7 @@ abstract class QueueFactoryTestAbstract extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @covers Brera\Lib\Queue\Factory::__construct
+     * @covers Brera\Lib\Queue\Factory\AbstractQueueFactory::__construct
      */
     public function itShouldImplementTheFactoryInterface()
     {
@@ -39,7 +39,7 @@ abstract class QueueFactoryTestAbstract extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @covers Brera\Lib\Queue\Factory::setRepository
+     * @covers Brera\Lib\Queue\Factory\AbstractQueueFactory::setRepository
      */
     public function theRepositoryShouldBeSettable()
     {
@@ -50,7 +50,7 @@ abstract class QueueFactoryTestAbstract extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @covers Brera\Lib\Queue\Factory::getNewRepository
+     * @covers Brera\Lib\Queue\Factory\AbstractQueueFactory::getNewRepository
      */
     public function itShouldReturnARepositoryInstance()
     {
@@ -60,7 +60,7 @@ abstract class QueueFactoryTestAbstract extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @covers Brera\Lib\Queue\Factory::getNewRepository
+     * @covers Brera\Lib\Queue\Factory\AbstractQueueFactory::getNewRepository
      */
     public function itShouldAlwaysReturnANewRepositoryInstance()
     {
@@ -71,7 +71,7 @@ abstract class QueueFactoryTestAbstract extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @covers Brera\Lib\Queue\Factory::getRegisteredConfigInstance
+     * @covers Brera\Lib\Queue\Factory\AbstractQueueFactory::getRegisteredConfigInstance
      */
     public function itShouldReturnTheConfigInstanceFromTheRepository()
     {
@@ -84,7 +84,7 @@ abstract class QueueFactoryTestAbstract extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @covers Brera\Lib\Queue\Factory::getNewConfig
+     * @covers Brera\Lib\Queue\Factory\AbstractQueueFactory::getNewConfig
      */
     public function itShouldReturnAConfigInstance()
     {
@@ -94,7 +94,7 @@ abstract class QueueFactoryTestAbstract extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @covers Brera\Lib\Queue\Factory::getConsumerQueue
+     * @covers Brera\Lib\Queue\Factory\AbstractQueueFactory::getConsumerQueue
      */
     public function itShouldReturnAConsumerQueue()
     {
@@ -106,7 +106,7 @@ abstract class QueueFactoryTestAbstract extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @covers Brera\Lib\Queue\Factory::getProducerQueue
+     * @covers Brera\Lib\Queue\Factory\AbstractQueueFactory::getProducerQueue
      */
     public function itShouldReturnAProducerQueue()
     {
@@ -118,7 +118,7 @@ abstract class QueueFactoryTestAbstract extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @covers Brera\Lib\Queue\Factory::getOutgoingMessage
+     * @covers Brera\Lib\Queue\Factory\AbstractQueueFactory::getOutgoingMessage
      */
     public function itShouldReturnAnOutgoingMessage()
     {
@@ -128,7 +128,7 @@ abstract class QueueFactoryTestAbstract extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @covers Brera\Lib\Queue\Factory::getIncomingMessage
+     * @covers Brera\Lib\Queue\Factory\AbstractQueueFactory::getIncomingMessage
      */
     public function itShouldReturnAnIncomingMessage()
     {
@@ -138,7 +138,7 @@ abstract class QueueFactoryTestAbstract extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @covers Brera\Lib\Queue\Factory::getMessageBuilder
+     * @covers Brera\Lib\Queue\Factory\AbstractQueueFactory::getMessageBuilder
      */
     public function itShouldReturnAMessageBuilderInstance()
     {
@@ -148,21 +148,7 @@ abstract class QueueFactoryTestAbstract extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @covers Brera\Lib\Queue\Factory::getNewBackendFactory
-     */
-    public function itShouldReturnABackendFactoryInstance()
-    {
-        $stubBackendFactory = $this->getBreraQueueStubDisableOriginalConstructor('BackendFactoryInterface');
-        $this->stubRepository->expects($this->any())
-            ->method('getConfiguredBackendFactoryClass')
-            ->will($this->returnValue(get_class($stubBackendFactory)));
-        $result = $this->factory->getNewBackendFactory();
-        $this->assertInstanceOf('Brera\Lib\Queue\BackendFactoryInterface', $result);
-    }
-
-    /**
-     * @test
-     * @covers Brera\Lib\Queue\Factory::getRegisteredBackendFactoryInstance
+     * @covers Brera\Lib\Queue\Factory\AbstractQueueFactory::getRegisteredBackendFactoryInstance
      */
     public function itShouldReturnTheBackendFactoryFromTheRepository()
     {
@@ -174,7 +160,7 @@ abstract class QueueFactoryTestAbstract extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @covers Brera\Lib\Queue\Factory::getRegisteredBackendConfigInstance
+     * @covers Brera\Lib\Queue\Factory\AbstractQueueFactory::getRegisteredBackendConfigInstance
      */
     public function itShouldReturnTheRegisteredBackendConfigInstance()
     {
@@ -188,7 +174,7 @@ abstract class QueueFactoryTestAbstract extends \PHPUnit_Framework_TestCase
      * @param string $class
      * @return \PHPUnit_Framework_MockObject_MockObject
      */
-    private function getBreraQueueStubDisableOriginalConstructor($class)
+    protected function getBreraQueueStubDisableOriginalConstructor($class)
     {
         $stubObject = $this->getMockBuilder('Brera\Lib\Queue\\' . ucfirst($class))
             ->disableOriginalConstructor()
