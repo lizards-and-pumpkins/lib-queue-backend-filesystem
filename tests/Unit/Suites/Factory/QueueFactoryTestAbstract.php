@@ -1,13 +1,13 @@
 <?php
 
-namespace Brera\Lib\Queue\Tests\Unit;
+namespace Brera\Lib\Queue\Tests\Unit\Factory;
 
-use Brera\Lib\Queue\Factory;
+use Brera\Lib\Queue\Factory\AbstractQueueFactory;
 
-class FactoryTest extends \PHPUnit_Framework_TestCase
+abstract class QueueFactoryTestAbstract extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var Factory
+     * @var AbstractQueueFactory
      */
     private $factory;
 
@@ -19,9 +19,14 @@ class FactoryTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->stubRepository = $this->getBreraQueueStubDisableOriginalConstructor('Repository');
-        $this->factory = new Factory();
+        $this->factory = $this->getInstance();
         $this->factory->setRepository($this->stubRepository);
     }
+    
+    /**
+     * @return AbstractQueueFactory
+     */
+    abstract protected function getInstance();
 
     /**
      * @test

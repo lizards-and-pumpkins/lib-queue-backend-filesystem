@@ -4,10 +4,12 @@
 namespace Brera\Lib\Queue;
 
 
+use Brera\Lib\Queue\Factory\AbstractQueueFactory;
+
 class Repository implements RepositoryInterface
 {
     /**
-     * @var Factory
+     * @var AbstractQueueFactory
      */
     private $factory;
     private $config;

@@ -22,7 +22,7 @@ class AbstractTestBase extends \PHPUnit_Framework_TestCase
 
     protected function getStubFactory()
     {
-        $stubFactory = $this->getMockBuilder('Brera\Lib\Queue\Factory')
+        $stubFactory = $this->getMockBuilder('Brera\Lib\Queue\Factory\ConfigurableQueueFactory')
             ->disableOriginalConstructor()
             ->getMock();
         return $stubFactory;

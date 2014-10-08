@@ -1,15 +1,26 @@
 <?php
 
 
-namespace Brera\Lib\Queue;
+namespace Brera\Lib\Queue\Factory;
 
+use Brera\Lib\Queue\BackendConfigInterface;
+use Brera\Lib\Queue\BackendFactoryInterface;
+use Brera\Lib\Queue\Config;
+use Brera\Lib\Queue\ConsumerQueue;
+use Brera\Lib\Queue\FactoryInterface;
+use Brera\Lib\Queue\IncomingMessage;
+use Brera\Lib\Queue\MessageBuilder;
+use Brera\Lib\Queue\OutgoingMessage;
+use Brera\Lib\Queue\ProducerQueue;
+use Brera\Lib\Queue\Repository;
+use Brera\Lib\Queue\RepositoryInterface;
 
-class Factory implements FactoryInterface
+abstract class AbstractQueueFactory implements FactoryInterface
 {
     /**
      * @var RepositoryInterface
      */
-    private $repository;
+    protected $repository;
 
     function __construct()
     {
@@ -69,27 +80,15 @@ class Factory implements FactoryInterface
         return new MessageBuilder($this);
     }
 
-
     /**
      * @param string $channelName
      * @param string $payload
      * @param mixed $identifier
-     * @return IncomingMessageInterface
+     * @return IncomingMessage
      */
     public function getIncomingMessage($channelName, $payload, $identifier)
     {
         return new IncomingMessage($channelName, $payload, $identifier);
-    }
-
-    /**
-     * @return BackendFactoryInterface
-     */
-    public function getNewBackendFactory()
-    {
-        $class = $this->repository->getConfiguredBackendFactoryClass();
-        /** @var BackendFactoryInterface $factory */
-        $factory = new $class($this);
-        return $factory;
     }
 
     /**
