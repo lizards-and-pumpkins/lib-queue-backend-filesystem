@@ -7,18 +7,12 @@ use Brera\Lib\Queue\Backend\File\Filesystem\Directory,
     org\bovigo\vfs\vfsStream,
     org\bovigo\vfs\vfsStreamDirectory;
 
-/**
- * Class DirectoryTest
- *
- * @package Brera\Lib\Queue\Tests\Unit\Backend\File
- * @covers Brera\Lib\Queue\Backend\File\Filesystem\Directory
- */
 class DirectoryTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var vfsStreamDirectory
      */
-    private $root;
+    private $vfsRoot;
 
     /**
      * @var Directory
@@ -27,7 +21,7 @@ class DirectoryTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->root = vfsStream::setup('vfsRoot');
+        $this->vfsRoot = vfsStream::setup('vfsRoot');
         $this->directory = new Directory();
     }
 
@@ -35,22 +29,22 @@ class DirectoryTest extends \PHPUnit_Framework_TestCase
      * @test
      * @covers Brera\Lib\Queue\Backend\File\Filesystem\Directory::createDirRecursivelyIfNotExists
      */
-    public function testDirIsCreated()
+    public function itShouldCreateADirectory()
     {
         $path = 'vfsRoot' . DIRECTORY_SEPARATOR . 'foo';
         $this->directory->createDirRecursivelyIfNotExists(vfsStream::url($path));
-        $this->assertTrue($this->root->hasChild('foo'));
+        $this->assertTrue($this->vfsRoot->hasChild('foo'));
     }
 
     /**
      * @test
      * @covers Brera\Lib\Queue\Backend\File\Filesystem\Directory::createDirRecursivelyIfNotExists
      */
-    public function testRecursiveDirsAreCreated()
+    public function itShouldCreateRecursiveDirectories()
     {
         $path = 'vfsRoot' . DIRECTORY_SEPARATOR . 'foo' . DIRECTORY_SEPARATOR . 'bar';
         $this->directory->createDirRecursivelyIfNotExists(vfsStream::url($path));
-        $this->assertTrue($this->root->hasChild('foo' . DIRECTORY_SEPARATOR . 'bar'));
+        $this->assertTrue($this->vfsRoot->hasChild('foo' . DIRECTORY_SEPARATOR . 'bar'));
     }
 
     /**
@@ -59,31 +53,43 @@ class DirectoryTest extends \PHPUnit_Framework_TestCase
      * @expectedException RuntimeException
      * @expectedExceptionMessage Path already exists but is not a directory.
      */
-    public function testExceptionIsThrownIfPathExistsButItIsNotADir()
+    public function itShouldFailToCreateADirIfFileAlreadyExistsAtThisPath()
     {
-        $file = vfsStream::newFile('foo')->at($this->root);
+        $file = vfsStream::newFile('foo')->at($this->vfsRoot);
         $this->directory->createDirRecursivelyIfNotExists($file->url());
     }
 
     /**
      * @test
-     * @covers Brera\Lib\Queue\Backend\File\Filesystem\Directory::getNameOfOldestFileInDir
+     * @covers Brera\Lib\Queue\Backend\File\Filesystem\Directory::getNameOfFirstFileInSortedDir
      */
-    public function testItReturnsFirstFileInAlphabeticalOrderInADir()
+    public function itShouldReturnFirstFileInAlphabeticalOrderInADir()
     {
-        vfsStream::newFile('foo')->at($this->root);
-        vfsStream::newFile('bar')->at($this->root);
-        $result = $this->directory->getNameOfOldestFileInDir($this->root->url());
+        vfsStream::newFile('foo')->at($this->vfsRoot);
+        vfsStream::newFile('bar')->at($this->vfsRoot);
+        $result = $this->directory->getNameOfFirstFileInSortedDir($this->vfsRoot->url());
         $this->assertEquals('bar', $result);
     }
 
     /**
      * @test
-     * @covers Brera\Lib\Queue\Backend\File\Filesystem\Directory::getNameOfOldestFileInDir
+     * @covers Brera\Lib\Queue\Backend\File\Filesystem\Directory::getNameOfFirstFileInSortedDir
      */
-    public function testItReturnsAnEmptyStringIfDirIsEmpty()
+    public function itShouldReturnAnEmptyStringIfDirIsEmpty()
     {
-        $result = $this->directory->getNameOfOldestFileInDir($this->root->url());
+        $result = $this->directory->getNameOfFirstFileInSortedDir($this->vfsRoot->url());
         $this->assertEquals('', $result);
+    }
+
+    /**
+     * @test
+     * @covers Brera\Lib\Queue\Backend\File\Filesystem\Directory::getNameOfFirstFileInSortedDir
+     */
+    public function itShouldReturnAFile()
+    {
+        vfsStream::newFile('foo')->at($this->vfsRoot);
+        vfsStream::newDirectory('bar')->at($this->vfsRoot);
+        $result = $this->directory->getNameOfFirstFileInSortedDir($this->vfsRoot->url());
+        $this->assertEquals('foo', $result);
     }
 }

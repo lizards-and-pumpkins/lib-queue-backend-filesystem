@@ -1,6 +1,6 @@
 <?php
 
-namespace Brera\Lib\Queue\Tests\Unit;
+namespace Brera\Lib\Queue\Tests\Unit\Backend\File;
 
 require_once __DIR__ . '/abstracts/AbstractTestFileBackend.php';
 
@@ -22,50 +22,89 @@ class FileConsumerBackendTest extends AbstractTestFileBackend
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject
      */
-    protected $messageBuilder;
+    protected $stubMessageBuilder;
 
     public function setUp()
     {
         parent::setUp();
 
-        $this->messageBuilder = $this->getStubMessageBuilder();
-        $this->backend = new FileConsumerBackend($this->config, $this->messageBuilder, $this->directory, $this->file);
+        $this->stubMessageBuilder = $this->getStubMessageBuilder();
+        $this->backend = new FileConsumerBackend(
+            $this->stubConfig, $this->stubMessageBuilder, $this->stubDirectory, $this->stubFile
+        );
     }
 
     /**
      * @test
      * @covers Brera\Lib\Queue\Backend\File\FileConsumerBackend::getMessageFromQueue
      */
-    public function testItGetsAnIncomingMessage()
+    public function itShouldGetAnIncomingMessageFromAQueue()
     {
-        $this->addStorageDirToStubFactory('/tmp');
+        $rootDir = DIRECTORY_SEPARATOR . 'tmp';
+        $channelName = 'test-channel';
+        $fileName = 'foo';
 
-        $this->directory->expects($this->any())
-            ->method('getNameOfOldestFileInDir')
-            ->will($this->returnValue('foo'));
+        $this->addStorageDirToStubFactory($rootDir);
 
-        $message = $this->getStubMessage('test-channel', 'test-message', '/tmp/test-channel/processing/foo');
+        $this->stubDirectory->expects($this->any())
+            ->method('getNameOfFirstFileInSortedDir')
+            ->will($this->returnValue($fileName));
 
-        $this->messageBuilder->expects($this->any())
+        $messageIdentifier = $this->getMessageIdentifier($rootDir, $channelName, 'processing', $fileName);
+        $message = $this->getStubMessage($channelName, 'test-message', $messageIdentifier);
+
+        $this->stubMessageBuilder->expects($this->any())
             ->method('getIncomingMessage')
             ->will($this->returnValue($message));
 
-        $result = $this->backend->getMessageFromQueue('test-channel');
+        $result = $this->backend->getMessageFromQueue($channelName);
 
-        $this->assertEquals('test-channel', $result->getChannel());
-        $this->assertEquals('test-message', $result->getPayload());
-        $this->assertEquals('/tmp/test-channel/processing/foo', $result->getIdentifier());
+        $this->assertSame($message, $result);
     }
 
     /**
      * @test
      * @covers Brera\Lib\Queue\Backend\File\FileConsumerBackend::setMessageAsProcessed
      */
-    public function testItMovesMessageIntoProcessedState()
+    public function itShouldMoveMessageIntoProcessedState()
     {
-        $this->addStorageDirToStubFactory('/tmp');
-        $this->addMoveFileToFilesystemFile('/tmp/test-channel/complete/foo');
-        $message = $this->getStubMessage('test-channel', 'test-message', '/tmp/test-channel/processing/foo');
+        $rootDir = DIRECTORY_SEPARATOR . 'tmp';
+        $channelName = 'test-channel';
+        $fileName = 'foo';
+
+        $processingMessageIdentifier = $this->getMessageIdentifier($rootDir, $channelName, 'processing', $fileName);
+        $completeMessageIdentifier = $this->getMessageIdentifier($rootDir, $channelName, 'complete', $fileName);
+
+        $this->addStorageDirToStubFactory($rootDir);
+        $this->addGetKeepProcessedMessagesToStubFactory(true);
+
+        $this->stubFile->expects($this->once())
+            ->method('moveFile')
+            ->will($this->returnValue($completeMessageIdentifier));
+
+        $message = $this->getStubMessage($channelName, 'test-message', $processingMessageIdentifier);
+        $this->backend->setMessageAsProcessed($message);
+    }
+
+    /**
+     * @test
+     * @covers Brera\Lib\Queue\Backend\File\FileConsumerBackend::setMessageAsProcessed
+     */
+    public function itShouldRemoveProcessedMessage()
+    {
+        $rootDir = DIRECTORY_SEPARATOR . 'tmp';
+        $channelName = 'test-channel';
+        $fileName = 'foo';
+
+        $processingMessageIdentifier = $this->getMessageIdentifier($rootDir, $channelName, 'processing', $fileName);
+
+        $this->addStorageDirToStubFactory($rootDir);
+        $this->addGetKeepProcessedMessagesToStubFactory(false);
+
+        $this->stubFile->expects($this->once())
+            ->method('removeFile');
+
+        $message = $this->getStubMessage($channelName, 'test-message', $processingMessageIdentifier);
         $this->backend->setMessageAsProcessed($message);
     }
 }

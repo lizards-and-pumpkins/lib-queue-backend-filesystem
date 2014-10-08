@@ -1,34 +1,28 @@
 <?php
 
-namespace Brera\Lib\Queue\Tests\Unit;
+namespace Brera\Lib\Queue\Tests\Unit\Backend\File;
 
 require_once __DIR__ . '/AbstractTestBase.php';
 
 use Brera\Lib\Queue\Backend\File\FileAbstractBackend,
     Brera\Lib\Queue\Backend\File\Exception\RuntimeException;
 
-/**
- * Class AbstractTestFileBackend
- *
- * @package Brera\Lib\Queue\Tests\Unit
- * @covers Brera\Lib\Queue\Backend\File\FileAbstractBackend
- */
 class AbstractTestFileBackend extends AbstractTestBase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject
      */
-    protected $config;
+    protected $stubConfig;
 
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject
      */
-    protected $directory;
+    protected $stubDirectory;
 
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject
      */
-    protected $file;
+    protected $stubFile;
 
     /**
      * @var FileAbstractBackend
@@ -37,9 +31,9 @@ class AbstractTestFileBackend extends AbstractTestBase
 
     public function setUp()
     {
-        $this->config = $this->getStubFileConfig();
-        $this->directory = $this->getStubFilesystemDirectory();
-        $this->file = $this->getStubFilesystemFile();
+        $this->stubConfig = $this->getStubFileConfig();
+        $this->stubDirectory = $this->getStubFilesystemDirectory();
+        $this->stubFile = $this->getStubFilesystemFile();
     }
 
     /**
@@ -52,13 +46,6 @@ class AbstractTestFileBackend extends AbstractTestBase
     {
         $this->addStorageDirToStubFactory(null);
         $this->backend->checkIfChannelIsInitialized('test-channel');
-    }
-
-    protected function addMoveFileToFilesystemFile($newPath)
-    {
-        $this->file->expects($this->any())
-            ->method('moveFile')
-            ->will($this->returnValue($newPath));
     }
 
     private function getStubFileConfig()
@@ -87,8 +74,15 @@ class AbstractTestFileBackend extends AbstractTestBase
 
     protected function addStorageDirToStubFactory($dirPath)
     {
-        $this->config->expects($this->any())
+        $this->stubConfig->expects($this->atLeastOnce())
             ->method('getStorageRootDir')
             ->will($this->returnValue($dirPath));
+    }
+
+    protected function addGetKeepProcessedMessagesToStubFactory($returnVal)
+    {
+        $this->stubConfig->expects($this->atLeastOnce())
+            ->method('getKeepProcessedMessages')
+            ->will($this->returnValue($returnVal));
     }
 }

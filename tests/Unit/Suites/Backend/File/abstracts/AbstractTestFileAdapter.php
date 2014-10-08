@@ -1,6 +1,6 @@
 <?php
 
-namespace Brera\Lib\Queue\Tests\Unit;
+namespace Brera\Lib\Queue\Tests\Unit\Backend\File;
 
 require_once __DIR__ . '/AbstractTestBase.php';
 

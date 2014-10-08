@@ -28,10 +28,17 @@ class Directory
      * @param string $dirPath
      * @return string
      */
-    public function getNameOfOldestFileInDir($dirPath)
+    public function getNameOfFirstFileInSortedDir($dirPath)
     {
         $files = scandir($dirPath);
+        $result = '';
 
-        return count($files) > 2 ? $files[2] : '';
+        while ((list(, $file) = each($files)) && !$result) {
+            if (is_file($dirPath . DIRECTORY_SEPARATOR . $file)) {
+                $result = $file;
+            }
+        }
+
+        return $result;
     }
 }

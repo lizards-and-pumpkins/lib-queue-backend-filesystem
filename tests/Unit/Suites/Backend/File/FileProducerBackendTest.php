@@ -1,6 +1,6 @@
 <?php
 
-namespace Brera\Lib\Queue\Tests\Unit;
+namespace Brera\Lib\Queue\Tests\Unit\Backend\File;
 
 require_once __DIR__ . '/abstracts/AbstractTestFileBackend.php';
 
@@ -23,26 +23,32 @@ class FileProducerBackendTest extends AbstractTestFileBackend
     {
         parent::setUp();
 
-        $this->backend = new FileProducerBackend($this->config, $this->directory, $this->file);
+        $this->backend = new FileProducerBackend($this->stubConfig, $this->stubDirectory, $this->stubFile);
     }
 
     /**
      * @test
      * @covers Brera\Lib\Queue\Backend\File\FileProducerBackend::addMessageToQueue
      */
-    public function testItReturnsAMessageIdentifier()
+    public function itShouldReturnTheFilePathOfAMessage()
     {
-        $this->addStorageDirToStubFactory('/tmp');
+        $rootDir = DIRECTORY_SEPARATOR . 'tmp';
+        $channelName = 'test-channel';
+        $fileName = 'foo';
 
-        $this->file->expects($this->any())
+        $messageIdentifier = $this->getMessageIdentifier($rootDir, $channelName, 'pending', $fileName);
+
+        $this->addStorageDirToStubFactory($rootDir);
+
+        $this->stubFile->expects($this->any())
             ->method('getNewBaseFilename')
-            ->will($this->returnValue('foo'));
+            ->will($this->returnValue($fileName));
 
-        $this->file->expects($this->any())
+        $this->stubFile->expects($this->any())
             ->method('getUniqueFilename')
-            ->will($this->returnValue('foo'));
+            ->will($this->returnValue($fileName));
 
-        $result = $this->backend->addMessageToQueue('test-channel', 'test-message');
-        $this->assertEquals('/tmp/test-channel/pending/foo', $result);
+        $result = $this->backend->addMessageToQueue($channelName, 'test-message');
+        $this->assertEquals($messageIdentifier, $result);
     }
 }

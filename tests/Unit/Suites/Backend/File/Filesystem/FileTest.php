@@ -7,58 +7,92 @@ use Brera\Lib\Queue\Backend\File\Filesystem\File,
     org\bovigo\vfs\vfsStream,
     org\bovigo\vfs\vfsStreamDirectory;
 
-/**
- * Class FileTest
- *
- * @package Brera\Lib\Queue\Tests\Unit\Backend\File
- * @covers Brera\Lib\Queue\Backend\File\Filesystem\File
- */
 class FileTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var vfsStreamDirectory
      */
-    private $root;
+    private $vfsRoot;
 
     /**
      * @var File
      */
     private $file;
 
+    private $realFsChannelDir;
+
+    private $realFsPendingStateDir;
+
+    private $realFsProcessingStateDir;
+
     public function setUp()
     {
-        $this->root = vfsStream::setup('vfsRoot');
+        $this->vfsRoot = vfsStream::setup('vfsRoot');
         $this->file = new File();
+
+        /**
+         * Unfortunately vfs can't deal with glob and file locking, so some test run on real file system
+         */
+        $this->realFsChannelDir = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'brera-lib-queue-file';
+        $this->realFsPendingStateDir = $this->realFsChannelDir . DIRECTORY_SEPARATOR . 'pending';
+        $this->realFsProcessingStateDir = $this->realFsChannelDir . DIRECTORY_SEPARATOR . 'processing';
+
+        mkdir($this->realFsChannelDir);
+        mkdir($this->realFsPendingStateDir);
+        mkdir($this->realFsProcessingStateDir);
+    }
+
+    public function tearDown()
+    {
+        @unlink($this->realFsProcessingStateDir . DIRECTORY_SEPARATOR . 'baz_1');
+        @unlink($this->realFsProcessingStateDir . DIRECTORY_SEPARATOR . 'baz');
+        @unlink($this->realFsProcessingStateDir . DIRECTORY_SEPARATOR . 'foo');
+        rmdir($this->realFsProcessingStateDir);
+        rmdir($this->realFsPendingStateDir);
+        rmdir($this->realFsChannelDir);
     }
 
     /**
      * @test
      * @covers Brera\Lib\Queue\Backend\File\Filesystem\File::getNewBaseFilename
      */
-    public function testIfFilenameIsFloat()
+    public function itShouldReturnNonemptyString()
     {
         $result = $this->file->getNewBaseFilename();
-        $this->assertTrue(is_float($result));
+        $this->assertFalse(empty($result));
     }
 
     /**
      * @test
      * @covers Brera\Lib\Queue\Backend\File\Filesystem\File::getUniqueFilename
      */
-    public function testItChecksTheFileAgainstMultipleDirsAndAddsIncrementAccordingly()
+    public function itShouldReturnUniqueFileNamesAgainstMultipleDirs()
     {
-        /* Test is not possible as glob can not work with vfs */
+        touch($this->realFsProcessingStateDir . DIRECTORY_SEPARATOR . 'foo');
+        touch($this->realFsProcessingStateDir . DIRECTORY_SEPARATOR . 'baz');
+        touch($this->realFsProcessingStateDir . DIRECTORY_SEPARATOR . 'baz_1');
+
+        $globPattern = $this->realFsChannelDir . DIRECTORY_SEPARATOR . '*';
+
+        $result = $this->file->getUniqueFilename($globPattern, 'foo');
+        $this->assertEquals('foo_1', $result);
+
+        $result = $this->file->getUniqueFilename($globPattern, 'bar');
+        $this->assertEquals('bar', $result);
+
+        $result = $this->file->getUniqueFilename($globPattern, 'baz');
+        $this->assertEquals('baz_2', $result);
     }
 
     /**
      * @test
      * @covers Brera\Lib\Queue\Backend\File\Filesystem\File::moveFile
      */
-    public function testItMovesAFile()
+    public function itShouldMoveAFile()
     {
-        $currentDirectory = vfsStream::newDirectory('bar')->at($this->root);
+        $currentDirectory = vfsStream::newDirectory('bar')->at($this->vfsRoot);
         $file = vfsStream::newFile('foo')->at($currentDirectory);
-        $newDirectory = vfsStream::newDirectory('baz')->at($this->root);
+        $newDirectory = vfsStream::newDirectory('baz')->at($this->vfsRoot);
 
         $this->file->moveFile($file->url(), $newDirectory->url(), 'foo');
 
@@ -72,9 +106,9 @@ class FileTest extends \PHPUnit_Framework_TestCase
      * @expectedException RuntimeException
      * @expectedExceptionMessage Can not move the file.
      */
-    public function testItFailsToMoveAFile()
+    public function itShouldFailToMoveAFileToNonExistingDirectory()
     {
-        $currentDirectory = vfsStream::newDirectory('bar')->at($this->root);
+        $currentDirectory = vfsStream::newDirectory('bar')->at($this->vfsRoot);
         $file = vfsStream::newFile('foo')->at($currentDirectory);
 
         $nonExistingPath = vfsStream::url('vfsRoot' . DIRECTORY_SEPARATOR . 'baz');
@@ -85,19 +119,25 @@ class FileTest extends \PHPUnit_Framework_TestCase
      * @test
      * @covers Brera\Lib\Queue\Backend\File\Filesystem\File::writeFile
      */
-    public function testItWritesToAFile()
+    public function itShouldWriteToAFile()
     {
-        /* Can't test it as exclusive lock can't be set on vfsStream file */
+        $filePath = $this->realFsProcessingStateDir . DIRECTORY_SEPARATOR . 'foo';
+        $payload = 'test-message';
+
+        $this->file->writeFile($filePath, $payload);
+        $result = file_get_contents($filePath);
+
+        $this->assertEquals($payload, $result);
     }
 
     /**
      * @test
      * @covers Brera\Lib\Queue\Backend\File\Filesystem\File::readFile
      */
-    public function testItReturnsAFileContents()
+    public function itShouldReturnAFileContents()
     {
         $data = 'test-message';
-        $file = vfsStream::newFile('foo')->at($this->root);
+        $file = vfsStream::newFile('foo')->at($this->vfsRoot);
         file_put_contents($file->url(), $data);
         $result = $this->file->readFile($file->url());
 
@@ -108,7 +148,7 @@ class FileTest extends \PHPUnit_Framework_TestCase
      * @test
      * @covers Brera\Lib\Queue\Backend\File\Filesystem\File::getNewFileHandle
      */
-    public function testItReturnsNewFileHandle()
+    public function itShouldReturnNewFileHandle()
     {
         $path = vfsStream::url('vfsRoot' . DIRECTORY_SEPARATOR . 'foo');
         $handle = $this->file->getNewFileHandle($path, 'w+');
@@ -120,9 +160,9 @@ class FileTest extends \PHPUnit_Framework_TestCase
      * @test
      * @covers Brera\Lib\Queue\Backend\File\Filesystem\File::removeFile
      */
-    public function testFileIsRemoved()
+    public function itShouldRemoveAFile()
     {
-        $file = vfsStream::newFile('foo')->at($this->root);
+        $file = vfsStream::newFile('foo')->at($this->vfsRoot);
         $this->file->removeFile($file->url());
         $this->assertFalse(file_exists($file->url()));
     }

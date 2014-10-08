@@ -8,7 +8,7 @@ class File
 {
     public function getNewBaseFilename()
     {
-        return microtime(true);
+        return strval(microtime(true));
     }
 
     public function getUniqueFilename($globPattern, $fileName)

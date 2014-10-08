@@ -1,6 +1,6 @@
 <?php
 
-namespace Brera\Lib\Queue\Tests\Unit;
+namespace Brera\Lib\Queue\Tests\Unit\Backend\File;
 
 require_once __DIR__ . '/abstracts/AbstractTestFileAdapter.php';
 
@@ -40,13 +40,15 @@ class FileProducerAdapterTest extends AbstractTestFileAdapter
      */
     public function itShouldSendAMessageViaTheBackendImplementation()
     {
-        $this->stubBackendImplementation->expects($this->any())
-            ->method('addMessageToQueue')
-            ->will($this->returnValue('/dev/null/test-channel/pending/foo'));
-        
-        $result = $this->adapter->sendMessageToBackend('test-channel', 'test-message');
+        $rootDir = DIRECTORY_SEPARATOR . 'tmp';
+        $channelName = 'test-channel';
+        $fileName = 'foo';
 
-        $this->assertEquals('/dev/null/test-channel/pending/foo', $result);
+        $messageIdentifier = $this->getMessageIdentifier($rootDir, $channelName, 'pending', $fileName);
+        $this->stubBackendImplementation->expects($this->once())
+            ->method('addMessageToQueue')
+            ->will($this->returnValue($messageIdentifier));
+        
+        $this->adapter->sendMessageToBackend($channelName, 'test-message');
     }
 }
- 

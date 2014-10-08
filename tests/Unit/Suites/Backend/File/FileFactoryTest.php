@@ -1,6 +1,6 @@
 <?php
 
-namespace Brera\Lib\Queue\Tests\Unit;
+namespace Brera\Lib\Queue\Tests\Unit\Backend\File;
 
 include_once __DIR__ . '/abstracts/AbstractTestBase.php';
 
@@ -35,7 +35,7 @@ class FileFactoryTest extends AbstractTestBase
      * @test
      * @covers Brera\Lib\Queue\Backend\File\FileFactory::getNewBackendConfig
      */
-    public function testItReturnsAFileConfigInstance()
+    public function itShouldReturnAFileConfigInstance()
     {
         $result = $this->backendFactory->getNewBackendConfig();
         $this->assertInstanceOf('Brera\Lib\Queue\Backend\File\FileConfig', $result);
@@ -45,7 +45,7 @@ class FileFactoryTest extends AbstractTestBase
      * @test
      * @covers Brera\Lib\Queue\Backend\File\FileFactory::getConsumerAdapter
      */
-    public function testItReturnsAFileConsumerAdapter()
+    public function itShouldReturnAFileConsumerAdapter()
     {
         $this->setStubMessageBuilderOnStubFactory();
         $result = $this->backendFactory->getConsumerAdapter();
@@ -56,7 +56,7 @@ class FileFactoryTest extends AbstractTestBase
      * @test
      * @covers Brera\Lib\Queue\Backend\File\FileFactory::getProducerAdapter
      */
-    public function testItReturnsAFileProducerAdapter()
+    public function itShouldReturnAFileProducerAdapter()
     {
         $this->setStubMessageBuilderOnStubFactory();
         $result = $this->backendFactory->getProducerAdapter();
@@ -88,7 +88,7 @@ class FileFactoryTest extends AbstractTestBase
      * @test
      * @covers Brera\Lib\Queue\Backend\File\FileFactory::getFilesystemDirectoryInstance
      */
-    public function testItReturnsAFilesystemDirectory()
+    public function itShouldReturnAFilesystemDirectory()
     {
         $result = $this->backendFactory->getFilesystemDirectoryInstance();
         $this->assertInstanceOf('Brera\Lib\Queue\Backend\File\Filesystem\Directory', $result);
@@ -98,7 +98,7 @@ class FileFactoryTest extends AbstractTestBase
      * @test
      * @covers Brera\Lib\Queue\Backend\File\FileFactory::getFilesystemFileInstance
      */
-    public function testItReturnsAFilesystemFile()
+    public function itShouldReturnAFilesystemFile()
     {
         $result = $this->backendFactory->getFilesystemFileInstance();
         $this->assertInstanceOf('Brera\Lib\Queue\Backend\File\Filesystem\File', $result);

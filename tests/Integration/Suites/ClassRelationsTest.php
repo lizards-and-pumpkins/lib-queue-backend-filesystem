@@ -2,10 +2,8 @@
 
 namespace Brera\Lib\Queue\Tests\Integration;
 
-
-
-use Brera\Lib\Queue\Factory\FileQueueFactory;
-use Brera\Lib\Queue\Backend\File\FileConfig;
+use Brera\Lib\Queue\Factory\FileQueueFactory,
+    Brera\Lib\Queue\Backend\File\FileConfig;
 
 class ClassRelationsTest extends \PHPUnit_Framework_TestCase
 {
@@ -73,4 +71,4 @@ class ClassRelationsTest extends \PHPUnit_Framework_TestCase
     {
         $this->factory->setRepository($repositoryA);
     }
-} 
+}

@@ -57,7 +57,7 @@ class FileConsumerBackend extends FileAbstractBackend
 
         $this->file->lock($this->lockFileHandle);
 
-        if ($fileName = $this->directory->getNameOfOldestFileInDir($pendingStateDir)) {
+        if ($fileName = $this->directory->getNameOfFirstFileInSortedDir($pendingStateDir)) {
             $currentIdentifier = $pendingStateDir . DIRECTORY_SEPARATOR . $fileName;
             $this->changeMessageState($channelName, $currentIdentifier, self::STATE_PROCESSING);
 
