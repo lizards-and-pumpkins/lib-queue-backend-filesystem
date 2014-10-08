@@ -4,18 +4,18 @@ namespace Brera\Lib\Queue\Tests\Integration;
 
 use Brera\Lib\Queue\Backend\Null\NullConfig;
 use Brera\Lib\Queue\Backend\Null\NullFactory;
-use Brera\Lib\Queue\AbstractQueueFactory;
+use Brera\Lib\Queue\Factory\ConfigurableQueueFactory;
 
 class BootstrapQueueTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var AbstractQueueFactory
+     * @var ConfigurableQueueFactory
      */
     private $factory;
     
     public function setUp()
     {
-        $this->factory = new AbstractQueueFactory();
+        $this->factory = new ConfigurableQueueFactory();
     }
 
     /**
@@ -23,9 +23,6 @@ class BootstrapQueueTest extends \PHPUnit_Framework_TestCase
      */
     public function testBootstrapAndProcessFlowWithNullBackend()
     {
-        $config = $this->factory->getRegisteredConfigInstance();
-        $this->assertContains('NullFactory', $config->getBackendFactoryClass());
-        
         $backendConfig = $this->factory->getRegisteredBackendConfigInstance();
         $this->assertInstanceOf('Brera\Lib\Queue\Backend\Null\NullConfig', $backendConfig);
         
