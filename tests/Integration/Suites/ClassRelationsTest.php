@@ -70,8 +70,8 @@ class ClassRelationsTest extends \PHPUnit_Framework_TestCase
         return $messagePayload;
     }
 
-    private function switchToQueue($repositoryA)
+    private function switchToQueue($repository)
     {
-        $this->factory->setRepository($repositoryA);
+        $this->factory->setRepository($repository);
     }
 } 
