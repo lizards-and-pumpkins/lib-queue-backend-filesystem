@@ -31,30 +31,7 @@ class RepositoryTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertInstanceOf('Brera\Lib\Queue\RepositoryInterface', $this->repository);
     }
-
-    /**
-     * @test
-     * @covers Brera\Lib\Queue\Repository::getConfig
-     */
-    public function itShouldReturnAConfigInstance()
-    {
-        $this->setStubReturnValueOnStubObject('getNewConfig', 'getStubConfig');
-        $result = $this->repository->getConfig();
-        $this->assertInstanceOf('Brera\Lib\Queue\ConfigInterface', $result);
-    }
-
-    /**
-     * @test
-     * @covers Brera\Lib\Queue\Repository::getConfig
-     */
-    public function itShouldAlwaysReturnTheSameConfigInstance()
-    {
-        $this->setStubReturnValueOnStubObject('getNewConfig', 'getStubConfig');
-        $result1 = $this->repository->getConfig();
-        $result2 = $this->repository->getConfig();
-        $this->assertSame($result1, $result2);
-    }
-
+    
     /**
      * @test
      * @covers Brera\Lib\Queue\Repository::getBackendFactory
@@ -155,21 +132,6 @@ class RepositoryTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($result1, $result2);
     }
 
-    /**
-     * @test
-     * @covers Brera\Lib\Queue\Repository::getConfiguredBackendFactoryClass
-     */
-    public function itShouldReturnTheBackendFactoryClassNameFromTheConfig()
-    {
-        $testBackendConfigClass = 'TestBackendConfigClass';
-        $this->setStubReturnValueOnStubObject('getNewConfig', 'getStubConfig');
-        $this->repository->getConfig()->expects($this->any())
-            ->method('getBackendFactoryClass')
-            ->will($this->returnValue($testBackendConfigClass));
-        
-        $this->assertEquals($testBackendConfigClass, $this->repository->getConfiguredBackendFactoryClass());
-    }
-
     private function setStubReturnValueOnStubObject($method, $callback, $stubObject = null)
     {
         $stubGetter = function () use ($callback) {
@@ -187,14 +149,6 @@ class RepositoryTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
         return $stubFactory;
-    }
-
-    private function getStubConfig()
-    {
-        $stubConfig = $this->getMockBuilder('Brera\Lib\Queue\Config')
-            ->disableOriginalConstructor()
-            ->getMock();
-        return $stubConfig;
     }
 
     private function getStubBackendFactory()

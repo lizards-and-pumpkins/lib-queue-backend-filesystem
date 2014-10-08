@@ -12,7 +12,6 @@ class Repository implements RepositoryInterface
      * @var AbstractQueueFactory
      */
     private $factory;
-    private $config;
     private $backendFactory;
     private $producerAdapter;
     private $consumerAdapter;
@@ -23,18 +22,7 @@ class Repository implements RepositoryInterface
     {
         $this->factory = $factory;
     }
-
-    /**
-     * @return ConfigInterface
-     */
-    public function getConfig()
-    {
-        if (! isset($this->config)) {
-            $this->config = $this->factory->getNewConfig();
-        }
-        return $this->config;
-    }
-
+    
     /**
      * @return BackendFactoryInterface
      */
@@ -78,13 +66,5 @@ class Repository implements RepositoryInterface
             $this->getBackendFactory()->setConfiguredBackendConfigInstance($this->backendConfig);
         }
         return $this->backendConfig;
-    }
-
-    /**
-     * @return string
-     */
-    public function getConfiguredBackendFactoryClass()
-    {
-        return $this->getConfig()->getBackendFactoryClass();
     }
 } 

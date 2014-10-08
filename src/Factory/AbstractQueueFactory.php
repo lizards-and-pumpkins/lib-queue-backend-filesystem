@@ -5,7 +5,6 @@ namespace Brera\Lib\Queue\Factory;
 
 use Brera\Lib\Queue\BackendConfigInterface;
 use Brera\Lib\Queue\BackendFactoryInterface;
-use Brera\Lib\Queue\Config;
 use Brera\Lib\Queue\ConsumerQueue;
 use Brera\Lib\Queue\FactoryInterface;
 use Brera\Lib\Queue\IncomingMessage;
@@ -37,20 +36,7 @@ abstract class AbstractQueueFactory implements FactoryInterface
     {
         return new Repository($this);
     }
-
-    /**
-     * @return Config
-     */
-    public function getRegisteredConfigInstance()
-    {
-        return $this->repository->getConfig();
-    }
-
-    public function getNewConfig()
-    {
-        return new Config();
-    }
-
+    
     public function getConsumerQueue()
     {
         return new ConsumerQueue($this->repository->getConsumerAdapter());

@@ -68,30 +68,7 @@ abstract class QueueFactoryTestAbstract extends \PHPUnit_Framework_TestCase
         $result2 = $this->factory->getNewRepository();
         $this->assertNotSame($result1, $result2);
     }
-
-    /**
-     * @test
-     * @covers Brera\Lib\Queue\Factory\AbstractQueueFactory::getRegisteredConfigInstance
-     */
-    public function itShouldReturnTheConfigInstanceFromTheRepository()
-    {
-        $stubConfig = $this->getBreraQueueStubDisableOriginalConstructor('Config');
-        $this->setStubReturnValueOnStubRepository('getConfig', $stubConfig);
-        
-        $result = $this->factory->getRegisteredConfigInstance();
-        $this->assertSame($stubConfig, $result);
-    }
-
-    /**
-     * @test
-     * @covers Brera\Lib\Queue\Factory\AbstractQueueFactory::getNewConfig
-     */
-    public function itShouldReturnAConfigInstance()
-    {
-        $result = $this->factory->getNewConfig();
-        $this->assertInstanceOf('Brera\Lib\Queue\Config', $result);
-    }
-
+    
     /**
      * @test
      * @covers Brera\Lib\Queue\Factory\AbstractQueueFactory::getConsumerQueue

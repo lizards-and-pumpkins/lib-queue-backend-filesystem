@@ -9,6 +9,11 @@ require_once __DIR__ . '/QueueFactoryTestAbstract.php';
 
 class ConfigurableFactoryTest extends QueueFactoryTestAbstract
 {
+    /**
+     * @var ConfigurableQueueFactory
+     */
+    protected $factory;
+    
     protected function getInstance()
     {
         return new ConfigurableQueueFactory();
@@ -16,7 +21,24 @@ class ConfigurableFactoryTest extends QueueFactoryTestAbstract
 
     /**
      * @test
-     * @covers Brera\Lib\Queue\Factory\ConfigurableQueueFactory::getNewBackendFactory
+     */
+    public function itShouldReturnTheSetBackendFactoryClass()
+    {
+        $testClass = 'test-class';
+        $this->factory->setBackendFactoryClass($testClass);
+        $this->assertEquals($testClass, $this->factory->getBackendFactoryClass());
+    }
+
+    /**
+     * @test
+     */
+    public function itShouldReturnADefaultBackendFactoryClassIfNoneIsSet()
+    {
+        $this->assertNotNull($this->factory->getBackendFactoryClass());
+    }
+
+    /**
+     * @test
      */
     public function itShouldReturnABackendFactoryInstance()
     {
