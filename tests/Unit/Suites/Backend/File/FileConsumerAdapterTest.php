@@ -1,6 +1,6 @@
 <?php
 
-namespace Brera\Lib\Queue\Tests\Unit;
+namespace Brera\Lib\Queue\Tests\Unit\Backend\File;
 
 require_once __DIR__ . '/abstracts/AbstractTestFileAdapter.php';
 
@@ -49,7 +49,7 @@ class FileConsumerAdapterTest extends AbstractTestFileAdapter
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->stubBackendImplementation->expects($this->any())
+        $this->stubBackendImplementation->expects($this->once())
             ->method('setMessageAsProcessed');
 
         $this->adapter->setMessageAsProcessed($stubIncomingMessage);

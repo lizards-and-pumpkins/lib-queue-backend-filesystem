@@ -1,6 +1,6 @@
 <?php
 
-namespace Brera\Lib\Queue\Tests\Unit;
+namespace Brera\Lib\Queue\Tests\Unit\Backend\File;
 
 class AbstractTestBase extends \PHPUnit_Framework_TestCase
 {
@@ -44,5 +44,12 @@ class AbstractTestBase extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue($identifier));
 
         return $stubMessage;
+    }
+
+    protected function getMessageIdentifier($rootDir, $channelName, $state, $fileName)
+    {
+        $ds = DIRECTORY_SEPARATOR;
+
+        return $rootDir . $ds . $channelName . $ds . $state . $ds . $fileName;
     }
 }
