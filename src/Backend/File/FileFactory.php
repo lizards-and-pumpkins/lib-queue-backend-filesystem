@@ -50,8 +50,7 @@ class FileFactory extends AbstractBackendFactory
     {
         $directory = $this->getFilesystemDirectoryInstance();
         $file = $this->getFilesystemFileInstance();
-        $messageBuilder = $this->factory->getMessageBuilder();
 
-        return new FileConsumerBackend($this->configuredBackendConfigInstance, $messageBuilder, $directory, $file);
+        return new FileConsumerBackend($this->configuredBackendConfigInstance, $directory, $file);
     }
 }

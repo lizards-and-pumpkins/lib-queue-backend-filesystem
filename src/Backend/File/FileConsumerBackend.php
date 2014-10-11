@@ -4,17 +4,13 @@ namespace Brera\Lib\Queue\Backend\File;
 
 use Brera\Lib\Queue\Backend\File\Filesystem\Directory,
     Brera\Lib\Queue\Backend\File\Filesystem\File,
-    Brera\Lib\Queue\MessageBuilder,
     Brera\Lib\Queue\IncomingMessageInterface;
 
 class FileConsumerBackend extends FileAbstractBackend
 {
-    private $messageBuilder;
-
-    public function __construct(FileConfig $config, MessageBuilder $messageBuilder, Directory $directory, File $file)
+    public function __construct(FileConfig $config, Directory $directory, File $file)
     {
         $this->config = $config;
-        $this->messageBuilder = $messageBuilder;
         $this->directory = $directory;
         $this->file = $file;
     }
@@ -32,11 +28,11 @@ class FileConsumerBackend extends FileAbstractBackend
 
         $payload = $this->readMessage($messageIdentifier);
 
-        $this->messageBuilder->setChannel($channelName);
-        $this->messageBuilder->setPayload($payload);
-        $this->messageBuilder->setIdentifier($messageIdentifier);
-
-        return $this->messageBuilder->getIncomingMessage();
+        return array(
+            'channel'       => $channelName,
+            'payload'       => $payload,
+            'identifier'    => $messageIdentifier
+        );
     }
 
     public function setMessageAsProcessed(IncomingMessageInterface $message)
