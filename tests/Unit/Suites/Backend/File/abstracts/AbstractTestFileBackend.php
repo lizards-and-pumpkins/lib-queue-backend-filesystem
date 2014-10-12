@@ -39,13 +39,55 @@ class AbstractTestFileBackend extends AbstractTestBase
     /**
      * @test
      * @covers Brera\Lib\Queue\Backend\File\FileAbstractBackend::checkIfChannelIsInitialized
+     */
+    public function itShouldPassTheChannelInitializationWithoutMessagesBeingKept()
+    {
+        $this->addStorageDirToStubFactory('/some/path');
+
+        $this->addGetKeepProcessedMessagesToStubFactory(false);
+        $this->stubDirectory->expects($this->exactly(2))
+            ->method('createDirRecursivelyIfNotExists');
+
+        $this->backend->checkIfChannelIsInitialized('test-channel');
+    }
+
+    /**
+     * @test
+     * @covers Brera\Lib\Queue\Backend\File\FileAbstractBackend::checkIfChannelIsInitialized
+     */
+    public function itShouldPassTheChannelInitializationWithMessagesBeingKept()
+    {
+        $this->addStorageDirToStubFactory('/some/path');
+
+        $this->addGetKeepProcessedMessagesToStubFactory(true);
+        $this->stubDirectory->expects($this->exactly(3))
+            ->method('createDirRecursivelyIfNotExists');
+
+        $this->backend->checkIfChannelIsInitialized('test-channel');
+    }
+
+    /**
+     * @test
+     * @covers Brera\Lib\Queue\Backend\File\FileAbstractBackend::checkIfChannelIsInitialized
      * @expectedException RuntimeException
      * @expectedExceptionMessage Root storage path is not set.
      */
-    public function testItThrowsAnExceptionIfStorageRootIsNotSet()
+    public function itShouldThrowAnExceptionIfStorageRootIsNotSet()
     {
-        $this->addStorageDirToStubFactory(null);
         $this->backend->checkIfChannelIsInitialized('test-channel');
+    }
+
+    /**
+     * @test
+     * @covers Brera\Lib\Queue\Backend\File\FileAbstractBackend::changeMessageState
+     */
+    public function itShouldMoveFileToAnotherStateDir()
+    {
+        $this->addStorageDirToStubFactory('/some/path');
+        $this->stubFile->expects($this->once())
+            ->method('moveFile');
+
+        $this->backend->changeMessageState('test-channel', '/some/file/path', 'new-state');
     }
 
     private function getStubFileConfig()
