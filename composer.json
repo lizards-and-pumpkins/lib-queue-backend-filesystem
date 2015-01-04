@@ -5,19 +5,22 @@
     "authors": [
         {
             "name": "Vinai Kopp",
-            "email": "contact@vinaikopp.com"
+            "email": "vinai@brera.io"
         },
         {
             "name": "Tim Bezhashvyly",
             "email": "tim@brera.io"
+        },
+        {
+            "name": "Fabian Blechsmidt",
+            "email": "fabian@brera.io"
         }
     ],
     "require": {
-        "brera/lib-queue-interfaces": "dev-master"
+        "brera/lib-queue-interface": "dev-master"
     },
     "require-dev": {
-        "phpunit/phpunit": "4.*",
-        "mikey179/vfsStream": "1.4.*@dev"
+        "phpunit/phpunit": "4.*"
     },
     "autoload" : {
         "psr-4": { "Brera\\Lib\\Queue\\": "src/" }
@@ -25,7 +28,7 @@
     "repositories": [
         {
             "type": "vcs",
-            "url": "git@github.com:brera/lib-queue-interfaces.git"
+            "url": "git@github.com:brera/lib-queue-interface.git"
         }
     ]
 }
