@@ -23,7 +23,7 @@
         "phpunit/phpunit": "4.*"
     },
     "autoload" : {
-        "psr-4": { "Brera\\PoC\\Queue\\": "src/" }
+        "psr-4": { "Brera\\Queue\\InMemory\\": "src/" }
     },
     "repositories": [
         {
