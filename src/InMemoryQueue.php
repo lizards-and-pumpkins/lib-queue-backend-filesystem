@@ -1,6 +1,6 @@
 <?php
 
-namespace Brera\Lib\Queue;
+namespace Brera\PoC\Queue;
 
 class InMemoryQueue implements \Countable, Queue
 {
@@ -45,4 +45,4 @@ class InMemoryQueue implements \Countable, Queue
 
 	    return unserialize($data);
     }
-} 
+}

@@ -1,9 +1,9 @@
 <?php
 
-namespace Brera\Lib\Queue;
+namespace Brera\PoC\Queue;
 
 /**
- * @covers \Brera\Lib\Queue\InMemoryQueue
+ * @covers \Brera\PoC\Queue\InMemoryQueue
  */
 class InMemoryQueueTest extends \PHPUnit_Framework_TestCase
 {
@@ -27,7 +27,7 @@ class InMemoryQueueTest extends \PHPUnit_Framework_TestCase
 
 	/**
 	 * @test
-	 * @expectedException \Brera\Lib\Queue\NotSerializableException
+	 * @expectedException \Brera\PoC\Queue\NotSerializableException
 	 */
 	public function itShouldThrowNotSerializableException()
 	{
