@@ -27,11 +27,11 @@ class InMemoryQueue implements \Countable, Queue
      */
     public function add($data)
     {
-	    if (!$data instanceof \Serializable) {
-		    throw new NotSerializableException();
-	    }
-
-	    $this->queue[] = serialize($data);
+        try {
+            $this->queue[] = serialize($data);
+        } catch (\Exception $e) {
+            throw new NotSerializableException($e->getMessage());
+        }
     }
 
     /**

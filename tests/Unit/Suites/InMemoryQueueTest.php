@@ -31,7 +31,8 @@ class InMemoryQueueTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function itShouldThrowNotSerializableException()
 	{
-		$this->queue->add('foo');
+        $simpleXml = simplexml_load_string('<root />');
+		$this->queue->add($simpleXml);
 	}
 
     /**
