@@ -25,15 +25,15 @@ class InMemoryQueueTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(0, $this->queue);
     }
 
-	/**
-	 * @test
-	 * @expectedException \Brera\Queue\NotSerializableException
-	 */
-	public function itShouldThrowNotSerializableException()
-	{
+    /**
+     * @test
+     * @expectedException \Brera\Queue\NotSerializableException
+     */
+    public function itShouldThrowNotSerializableException()
+    {
         $simpleXml = simplexml_load_string('<root />');
-		$this->queue->add($simpleXml);
-	}
+        $this->queue->add($simpleXml);
+    }
 
     /**
      * @test
@@ -50,10 +50,10 @@ class InMemoryQueueTest extends \PHPUnit_Framework_TestCase
      */
     public function itShouldReturnTheNextEventFromTheQueue()
     {
-	    $stubSerializableData = $this->getMock(\Serializable::class);
-	    $stubSerializableData->expects($this->once())
-		    ->method('serialize')
-		    ->willReturn(serialize(''));
+        $stubSerializableData = $this->getMock(\Serializable::class);
+        $stubSerializableData->expects($this->once())
+            ->method('serialize')
+            ->willReturn(serialize(''));
         $this->queue->add($stubSerializableData);
         $result = $this->queue->next();
         $this->assertEquals($stubSerializableData, $result);
@@ -64,10 +64,10 @@ class InMemoryQueueTest extends \PHPUnit_Framework_TestCase
      */
     public function retrievingTheEventShouldRemoveItFromTheQueue()
     {
-	    $stubSerializableData = $this->getMock(\Serializable::class);
-	    $stubSerializableData->expects($this->once())
-	                         ->method('serialize')
-	                         ->willReturn(serialize(''));
+        $stubSerializableData = $this->getMock(\Serializable::class);
+        $stubSerializableData->expects($this->once())
+                             ->method('serialize')
+                             ->willReturn(serialize(''));
         $this->queue->add($stubSerializableData);
         $this->queue->next();
         $this->assertCount(0, $this->queue);
@@ -75,7 +75,7 @@ class InMemoryQueueTest extends \PHPUnit_Framework_TestCase
     
     /**
      * @test
-     * @expectedException \RuntimeException 
+     * @expectedException \RuntimeException
      */
     public function itShouldThrowAnExceptionIfNextIsCalledOnAnEmptyQueue()
     {
@@ -83,4 +83,4 @@ class InMemoryQueueTest extends \PHPUnit_Framework_TestCase
     }
     
     /* TODO: test it should return the events in the correct order */
-} 
+}

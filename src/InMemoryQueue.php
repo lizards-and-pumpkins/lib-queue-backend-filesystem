@@ -44,8 +44,8 @@ class InMemoryQueue implements \Countable, Queue
             throw new \UnderflowException('Trying to get next message of an empty queue');
         }
 
-	    $data = array_shift($this->queue);
+        $data = array_shift($this->queue);
 
-	    return unserialize($data);
+        return unserialize($data);
     }
 }
