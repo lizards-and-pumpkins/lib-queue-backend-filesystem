@@ -3,7 +3,7 @@
 namespace Brera\Queue\InMemory;
 
 /**
- * @covers \Brera\Queue\InMemoryQueue
+ * @covers \Brera\Queue\InMemory\InMemoryQueue
  */
 class InMemoryQueueTest extends \PHPUnit_Framework_TestCase
 {
