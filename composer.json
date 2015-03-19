@@ -12,12 +12,12 @@
             "email": "tim@brera.io"
         },
         {
-            "name": "Fabian Blechsmidt",
+            "name": "Fabian Blechschmidt",
             "email": "fabian@brera.io"
         }
     ],
     "require": {
-        "brera/proof-of-concept": "dev-master"
+        "brera/brera": "dev-master"
     },
     "require-dev": {
         "phpunit/phpunit": "4.*"
