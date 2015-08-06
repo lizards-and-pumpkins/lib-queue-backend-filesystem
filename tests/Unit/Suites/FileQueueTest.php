@@ -34,7 +34,7 @@ class FileQueueTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->storagePath = sys_get_temp_dir() . '/brera/test-queue/content';
-        $this->lockFilePath = sys_get_temp_dir() . '/brera/test-queue/lock';
+        $this->lockFilePath = sys_get_temp_dir() . '/brera/test-queue/lock/lockfile';
         $this->fileQueue = $this->createFileQueueInstance();
     }
 
@@ -42,6 +42,7 @@ class FileQueueTest extends \PHPUnit_Framework_TestCase
     {
         if (file_exists($this->lockFilePath)) {
             unlink($this->lockFilePath);
+            rmdir(dirname($this->lockFilePath));
         }
         if (file_exists($this->storagePath)) {
             $list = scandir($this->storagePath);
