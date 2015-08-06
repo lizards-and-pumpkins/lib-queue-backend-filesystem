@@ -16,7 +16,7 @@ class FileQueue implements Queue
     /**
      * @var string
      */
-    private $lockFile;
+    private $lockFilePath;
 
     /**
      * @var resource
@@ -25,12 +25,12 @@ class FileQueue implements Queue
 
     /**
      * @param string $storagePath
-     * @param string $lockFile
+     * @param string $lockFilePath
      */
-    public function __construct($storagePath, $lockFile)
+    public function __construct($storagePath, $lockFilePath)
     {
         $this->storagePath = $storagePath;
-        $this->lockFile = $lockFile;
+        $this->lockFilePath = $lockFilePath;
     }
 
     public function __destruct()
@@ -82,10 +82,10 @@ class FileQueue implements Queue
     private function getLock()
     {
         $this->createDirIfNotExists();
-        if (! file_exists($this->lockFile)) {
-            touch($this->lockFile);
+        if (! file_exists($this->lockFilePath)) {
+            touch($this->lockFilePath);
         }
-        $this->lock = fopen($this->lockFile, 'r+');
+        $this->lock = fopen($this->lockFilePath, 'r+');
         flock($this->lock, LOCK_EX);
     }
 

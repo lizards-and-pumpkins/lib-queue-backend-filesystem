@@ -21,27 +21,27 @@ class FileQueueTest extends \PHPUnit_Framework_TestCase
     /**
      * @var string
      */
-    private $lockFile;
+    private $lockFilePath;
     
     /**
      * @return FileQueue
      */
     private function createFileQueueInstance()
     {
-        return new FileQueue($this->storagePath, $this->lockFile);
+        return new FileQueue($this->storagePath, $this->lockFilePath);
     }
 
     protected function setUp()
     {
         $this->storagePath = sys_get_temp_dir() . '/brera/test-queue/content';
-        $this->lockFile = sys_get_temp_dir() . '/brera/test-queue/lock';
+        $this->lockFilePath = sys_get_temp_dir() . '/brera/test-queue/lock';
         $this->fileQueue = $this->createFileQueueInstance();
     }
 
     protected function tearDown()
     {
-        if (file_exists($this->lockFile)) {
-            unlink($this->lockFile);
+        if (file_exists($this->lockFilePath)) {
+            unlink($this->lockFilePath);
         }
         if (file_exists($this->storagePath)) {
             $list = scandir($this->storagePath);
