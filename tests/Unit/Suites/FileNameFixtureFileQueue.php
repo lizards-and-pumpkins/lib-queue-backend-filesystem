@@ -13,6 +13,7 @@ class FileNameFixtureFileQueue extends FileQueue
     /**
      * @param string $storagePath
      * @param string $lockFilePath
+     * @param string $messageFileName
      */
     public function __construct($storagePath, $lockFilePath, $messageFileName)
     {
