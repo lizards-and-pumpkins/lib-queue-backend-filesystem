@@ -55,9 +55,9 @@ class FileQueue implements Queue
     {
         $this->createStorageDirIfNotExists();
         $this->retrieveLock();
-        $file = $this->storagePath . '/' . $this->getFileNameForMessage();
-        $suffix = $this->getFileNameSuffix($file);
-        file_put_contents($file . $suffix, $this->serialize($data));
+        $filePath = $this->storagePath . '/' . $this->getFileNameForMessage();
+        $suffix = $this->getFileNameSuffix($filePath);
+        file_put_contents($filePath . $suffix, $this->serialize($data));
         $this->releaseLock();
     }
 
@@ -68,9 +68,9 @@ class FileQueue implements Queue
     {
         $this->createStorageDirIfNotExists();
         $this->retrieveLock();
-        $file = $this->getNextFile();
-        $data = unserialize(file_get_contents($file));
-        unlink($file);
+        $filePath = $this->getNextFile();
+        $data = unserialize(file_get_contents($filePath));
+        unlink($filePath);
         $this->releaseLock();
         return $data;
     }
