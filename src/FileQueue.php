@@ -43,7 +43,7 @@ class FileQueue implements Queue
      */
     public function count()
     {
-        $this->createDirIfNotExists();
+        $this->createStorageDirIfNotExists();
         return count(scandir($this->storagePath)) -2;
     }
 
@@ -53,6 +53,7 @@ class FileQueue implements Queue
      */
     public function add($data)
     {
+        $this->createStorageDirIfNotExists();
         $this->getLock();
         $file = $this->storagePath . '/' . microtime(true);
         file_put_contents($file, $this->serialize($data));
@@ -64,6 +65,7 @@ class FileQueue implements Queue
      */
     public function next()
     {
+        $this->createStorageDirIfNotExists();
         $this->getLock();
         $file = $this->getNextFile();
         $data = unserialize(file_get_contents($file));
@@ -72,19 +74,32 @@ class FileQueue implements Queue
         return $data;
     }
 
-    private function createDirIfNotExists()
+    private function createStorageDirIfNotExists()
     {
         if (!file_exists($this->storagePath)) {
             mkdir($this->storagePath, 0777, true);
         }
     }
 
-    private function getLock()
+    private function createLockFileIfNotExists()
     {
-        $this->createDirIfNotExists();
-        if (! file_exists($this->lockFilePath)) {
+        if (!file_exists($this->lockFilePath)) {
+            $this->createLockFileDir();
             touch($this->lockFilePath);
         }
+    }
+
+    private function createLockFileDir()
+    {
+        $lockFileDir = dirname($this->lockFilePath);
+        if (!file_exists($lockFileDir)) {
+            mkdir($lockFileDir, 0777, true);
+        }
+    }
+
+    private function getLock()
+    {
+        $this->createLockFileIfNotExists();
         $this->lock = fopen($this->lockFilePath, 'r+');
         flock($this->lock, LOCK_EX);
     }
