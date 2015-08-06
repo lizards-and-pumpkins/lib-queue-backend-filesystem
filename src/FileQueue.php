@@ -54,7 +54,7 @@ class FileQueue implements Queue
     public function add($data)
     {
         $this->createStorageDirIfNotExists();
-        $this->getLock();
+        $this->retrieveLock();
         $file = $this->storagePath . '/' . microtime(true);
         file_put_contents($file, $this->serialize($data));
         $this->releaseLock();
@@ -66,7 +66,7 @@ class FileQueue implements Queue
     public function next()
     {
         $this->createStorageDirIfNotExists();
-        $this->getLock();
+        $this->retrieveLock();
         $file = $this->getNextFile();
         $data = unserialize(file_get_contents($file));
         unlink($file);
@@ -97,7 +97,7 @@ class FileQueue implements Queue
         }
     }
 
-    private function getLock()
+    private function retrieveLock()
     {
         $this->createLockFileIfNotExists();
         $this->lock = fopen($this->lockFilePath, 'r+');
