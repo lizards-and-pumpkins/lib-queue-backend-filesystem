@@ -148,7 +148,7 @@ class FileQueue implements Queue
      */
     protected function getFileNameForMessage()
     {
-        return (string) microtime(true);
+        return (string) microtime(true) * 10000;
     }
 
     /**
