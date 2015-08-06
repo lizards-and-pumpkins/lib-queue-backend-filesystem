@@ -120,12 +120,16 @@ class FileQueueTest extends \PHPUnit_Framework_TestCase
 
     public function testItReturnsManyMessagesInTheCorrectOrder()
     {
+        $instanceOne = $this->fileQueue;
+        $instanceTwo = $this->createFileQueueInstance();
         $nMessages = 1000;
         for ($i = 0; $i < $nMessages; $i++) {
-            $this->fileQueue->add($i);
+            $fileQueue = $i % 2 === 0 ? $instanceOne : $instanceTwo;
+            $fileQueue->add($i);
         }
         for ($i = 0; $i < $nMessages; $i++) {
-            $this->assertSame($i, $this->fileQueue->next());
+            $fileQueue = $i % 2 === 1 ? $instanceOne : $instanceTwo;
+            $this->assertSame($i, $fileQueue->next());
         }
     }
 }
