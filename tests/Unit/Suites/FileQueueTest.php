@@ -124,12 +124,12 @@ class FileQueueTest extends \PHPUnit_Framework_TestCase
         $instanceTwo = $this->createFileQueueInstance();
         $nMessages = 1000;
         for ($i = 0; $i < $nMessages; $i++) {
-            $fileQueue = $i % 2 === 0 ? $instanceOne : $instanceTwo;
-            $fileQueue->add($i);
+            $writeQueue = $i % 2 === 0 ? $instanceOne : $instanceTwo;
+            $writeQueue->add($i);
         }
         for ($i = 0; $i < $nMessages; $i++) {
-            $fileQueue = $i % 2 === 1 ? $instanceOne : $instanceTwo;
-            $this->assertSame($i, $fileQueue->next());
+            $readQueue = $i % 2 === 1 ? $instanceOne : $instanceTwo;
+            $this->assertSame($i, $readQueue->next());
         }
     }
 }
