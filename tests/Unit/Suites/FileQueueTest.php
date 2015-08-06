@@ -12,8 +12,15 @@ class FileQueueTest extends \PHPUnit_Framework_TestCase
      * @var FileQueue
      */
     private $fileQueue;
-    
-    private $dir;
+
+    /**
+     * @var string
+     */
+    private $storagePath;
+
+    /**
+     * @var string
+     */
     private $lockFile;
     
     /**
@@ -21,13 +28,13 @@ class FileQueueTest extends \PHPUnit_Framework_TestCase
      */
     private function createFileQueueInstance()
     {
-        return new FileQueue($this->dir, $this->lockFile);
+        return new FileQueue($this->storagePath, $this->lockFile);
     }
 
     protected function setUp()
     {
-        $this->dir = sys_get_temp_dir() . '/brera/queue/content';
-        $this->lockFile = sys_get_temp_dir() . '/brera/queue/lock';
+        $this->storagePath = sys_get_temp_dir() . '/brera/test-queue/content';
+        $this->lockFile = sys_get_temp_dir() . '/brera/test-queue/lock';
         $this->fileQueue = $this->createFileQueueInstance();
     }
 
@@ -36,15 +43,15 @@ class FileQueueTest extends \PHPUnit_Framework_TestCase
         if (file_exists($this->lockFile)) {
             unlink($this->lockFile);
         }
-        if (file_exists($this->dir)) {
-            $list = scandir($this->dir);
+        if (file_exists($this->storagePath)) {
+            $list = scandir($this->storagePath);
             foreach ($list as $fileName) {
-                $file = $this->dir . '/' . $fileName;
+                $file = $this->storagePath . '/' . $fileName;
                 if (is_file($file)) {
                     unlink($file);
                 }
             }
-            rmdir($this->dir);
+            rmdir($this->storagePath);
         }
     }
 

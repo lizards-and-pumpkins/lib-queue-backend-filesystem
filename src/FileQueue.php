@@ -11,7 +11,7 @@ class FileQueue implements Queue
     /**
      * @var string
      */
-    private $dir;
+    private $storagePath;
 
     /**
      * @var string
@@ -24,12 +24,12 @@ class FileQueue implements Queue
     private $lock;
 
     /**
-     * @param string $dir
+     * @param string $storagePath
      * @param string $lockFile
      */
-    public function __construct($dir, $lockFile)
+    public function __construct($storagePath, $lockFile)
     {
-        $this->dir = $dir;
+        $this->storagePath = $storagePath;
         $this->lockFile = $lockFile;
     }
 
@@ -44,16 +44,17 @@ class FileQueue implements Queue
     public function count()
     {
         $this->createDirIfNotExists();
-        return count(scandir($this->dir)) -2;
+        return count(scandir($this->storagePath)) -2;
     }
 
     /**
      * @param mixed $data
+     * @return void
      */
     public function add($data)
     {
         $this->getLock();
-        $file = $this->dir . '/' . microtime(true);
+        $file = $this->storagePath . '/' . microtime(true);
         file_put_contents($file, $this->serialize($data));
         $this->releaseLock();
     }
@@ -73,8 +74,8 @@ class FileQueue implements Queue
 
     private function createDirIfNotExists()
     {
-        if (!file_exists($this->dir)) {
-            mkdir($this->dir, 0777, true);
+        if (!file_exists($this->storagePath)) {
+            mkdir($this->storagePath, 0777, true);
         }
     }
 
@@ -102,7 +103,7 @@ class FileQueue implements Queue
      */
     private function getNextFile()
     {
-        $files = scandir($this->dir);
+        $files = scandir($this->storagePath);
         $i = 0;
         while ($i < count($files) && in_array($files[$i], ['.', '..'], true)) {
             $i++;
@@ -110,7 +111,7 @@ class FileQueue implements Queue
         if ($i == count($files)) {
             throw new \UnderflowException('Trying to get next message of an empty queue');
         }
-        return $this->dir . '/' . $files[$i];
+        return $this->storagePath . '/' . $files[$i];
     }
 
     /**
