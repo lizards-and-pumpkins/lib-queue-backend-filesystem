@@ -79,6 +79,20 @@ class FileQueueTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($value, $this->fileQueue->next());
     }
 
+    public function testItDecrementsTheCountAfterCallingNext()
+    {
+        $this->fileQueue->add('message');
+        $this->fileQueue->add('message');
+        $this->fileQueue->add('message');
+        $this->assertSame(3, $this->fileQueue->count());
+        $this->fileQueue->next();
+        $this->assertSame(2, $this->fileQueue->count());
+        $this->fileQueue->next();
+        $this->assertSame(1, $this->fileQueue->count());
+        $this->fileQueue->next();
+        $this->assertSame(0, $this->fileQueue->count());
+    }
+
     public function testAddOneTwoReturnsOneTwo()
     {
         $value1 = 'one';
