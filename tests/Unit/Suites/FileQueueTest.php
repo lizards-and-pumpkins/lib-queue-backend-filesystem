@@ -133,4 +133,16 @@ class FileQueueTest extends \PHPUnit_Framework_TestCase
             $this->assertSame($i, $readQueue->next());
         }
     }
+
+    public function testItWillAppendASuffixIfTheFileAlreadyExists()
+    {
+        require_once 'FileNameFixtureFileQueue.php';
+        $testFileQueue = new FileNameFixtureFileQueue($this->storagePath, $this->lockFilePath, 'test-file');
+        $testFileQueue->add('message');
+        $testFileQueue->add('message');
+        $testFileQueue->add('message');
+        $this->assertFileExists($this->storagePath . '/test-file');
+        $this->assertFileExists($this->storagePath . '/test-file_1');
+        $this->assertFileExists($this->storagePath . '/test-file_2');
+    }
 }

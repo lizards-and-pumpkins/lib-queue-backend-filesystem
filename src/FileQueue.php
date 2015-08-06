@@ -55,8 +55,9 @@ class FileQueue implements Queue
     {
         $this->createStorageDirIfNotExists();
         $this->retrieveLock();
-        $file = $this->storagePath . '/' . microtime(true);
-        file_put_contents($file, $this->serialize($data));
+        $file = $this->storagePath . '/' . $this->getFileNameForMessage();
+        $suffix = $this->getFileNameSuffix($file);
+        file_put_contents($file . $suffix, $this->serialize($data));
         $this->releaseLock();
     }
 
@@ -140,5 +141,26 @@ class FileQueue implements Queue
         } catch (\Exception $e) {
             throw new NotSerializableException($e->getMessage());
         }
+    }
+
+    /**
+     * @return string
+     */
+    protected function getFileNameForMessage()
+    {
+        return (string) microtime(true);
+    }
+
+    /**
+     * @param string $filePath
+     * @return string
+     */
+    private function getFileNameSuffix($filePath)
+    {
+        if (! file_exists($filePath)) {
+            return '';
+        }
+        $count = count(glob($filePath . '_*'));
+        return '_' . ($count + 1);
     }
 }
