@@ -165,10 +165,11 @@ class FileQueue implements Queue
      */
     private function getFileNameSuffix($filePath)
     {
-        if (! file_exists($filePath)) {
-            return '';
+        $suffix = '';
+        $count = 0;
+        while (file_exists($filePath . $suffix)) {
+            $suffix = '_' . ++$count;
         }
-        $count = count(glob($filePath . '_*'));
-        return '_' . ($count + 1);
+        return $suffix;
     }
 }
