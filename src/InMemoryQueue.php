@@ -5,7 +5,7 @@ namespace Brera\Queue\InMemory;
 use Brera\Queue\Queue;
 use Brera\Queue\NotSerializableException;
 
-class InMemoryQueue implements \Countable, Queue
+class InMemoryQueue implements Queue
 {
     /**
      * @var array
