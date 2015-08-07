@@ -67,6 +67,17 @@ class FileQueueTest extends \PHPUnit_Framework_TestCase
         $this->assertSame(1, $this->fileQueue->count());
     }
 
+    public function testItIsNotReadyForNextWhenTheQueueIsEmpty()
+    {
+        $this->assertFalse($this->fileQueue->isReadyForNext());
+    }
+
+    public function testItIsReadyForNextWhenTheQueueIsNotEmpty()
+    {
+        $this->fileQueue->add('dummy');
+        $this->assertTrue($this->fileQueue->isReadyForNext());
+    }
+
     public function testItThrowsAnExceptionWhenNextIsCalledOnEmptyQueue()
     {
         $this->setExpectedException(\UnderflowException::class, 'Trying to get next message of an empty queue');

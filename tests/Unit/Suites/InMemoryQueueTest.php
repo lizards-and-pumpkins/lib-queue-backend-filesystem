@@ -45,10 +45,18 @@ class InMemoryQueueTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(1, $this->queue);
     }
 
-    /**
-     * @test
-     */
-    public function itShouldReturnTheNextEventFromTheQueue()
+    public function testItIsNotReadyForNextWhenTheQueueIsEmpty()
+    {
+        $this->assertFalse($this->queue->isReadyForNext());
+    }
+
+    public function testItIsReadyForNextWhenTheQueueIsNotEmpty()
+    {
+        $this->queue->add('dummy');
+        $this->assertTrue($this->queue->isReadyForNext());
+    }
+
+    public function testItShouldReturnTheNextEventFromTheQueue()
     {
         $stubSerializableData = $this->getMock(\Serializable::class);
         $stubSerializableData->expects($this->once())
