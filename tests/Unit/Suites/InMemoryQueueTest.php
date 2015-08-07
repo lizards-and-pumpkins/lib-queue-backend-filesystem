@@ -17,38 +17,37 @@ class InMemoryQueueTest extends \PHPUnit_Framework_TestCase
         $this->queue = new InMemoryQueue();
     }
 
-    /**
-     * @test
-     */
-    public function itShouldInitiallyBeEmpty()
+    public function testItShouldInitiallyBeEmpty()
     {
         $this->assertCount(0, $this->queue);
     }
 
-    /**
-     * @test
-     * @expectedException \Brera\Queue\NotSerializableException
-     */
-    public function itShouldThrowNotSerializableException()
+    public function testItShouldThrowNotSerializableException()
     {
+        $this->setExpectedException(\Brera\Queue\NotSerializableException::class);
         $simpleXml = simplexml_load_string('<root />');
         $this->queue->add($simpleXml);
     }
 
-    /**
-     * @test
-     */
-    public function itCanAddSerializableObjectToTheQueue()
+    public function testItCanAddSerializableObjectToTheQueue()
     {
         $stubSerializableData = $this->getMock(\Serializable::class);
         $this->queue->add($stubSerializableData);
         $this->assertCount(1, $this->queue);
     }
 
-    /**
-     * @test
-     */
-    public function itShouldReturnTheNextEventFromTheQueue()
+    public function testItIsNotReadyForNextWhenTheQueueIsEmpty()
+    {
+        $this->assertFalse($this->queue->isReadyForNext());
+    }
+
+    public function testItIsReadyForNextWhenTheQueueIsNotEmpty()
+    {
+        $this->queue->add('dummy');
+        $this->assertTrue($this->queue->isReadyForNext());
+    }
+
+    public function testItShouldReturnTheNextEventFromTheQueue()
     {
         $stubSerializableData = $this->getMock(\Serializable::class);
         $stubSerializableData->expects($this->once())
@@ -59,10 +58,7 @@ class InMemoryQueueTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($stubSerializableData, $result);
     }
 
-    /**
-     * @test
-     */
-    public function retrievingTheEventShouldRemoveItFromTheQueue()
+    public function testRetrievingTheMessageShouldRemoveItFromTheQueue()
     {
         $stubSerializableData = $this->getMock(\Serializable::class);
         $stubSerializableData->expects($this->once())
@@ -73,12 +69,9 @@ class InMemoryQueueTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(0, $this->queue);
     }
     
-    /**
-     * @test
-     * @expectedException \RuntimeException
-     */
-    public function itShouldThrowAnExceptionIfNextIsCalledOnAnEmptyQueue()
+    public function testItShouldThrowAnExceptionIfNextIsCalledOnAnEmptyQueue()
     {
+        $this->setExpectedException(\RuntimeException::class);
         $this->queue->next();
     }
     

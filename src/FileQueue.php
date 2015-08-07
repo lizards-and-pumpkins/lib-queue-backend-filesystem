@@ -48,6 +48,14 @@ class FileQueue implements Queue
     }
 
     /**
+     * @return bool
+     */
+    public function isReadyForNext()
+    {
+        return $this->count() > 0;
+    }
+
+    /**
      * @param mixed $data
      * @return void
      */

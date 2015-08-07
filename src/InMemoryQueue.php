@@ -21,6 +21,14 @@ class InMemoryQueue implements \Countable, Queue
     }
 
     /**
+     * @return bool
+     */
+    public function isReadyForNext()
+    {
+        return $this->count() > 0;
+    }
+
+    /**
      * @param mixed $data
      * @throws NotSerializableException
      * @return null
