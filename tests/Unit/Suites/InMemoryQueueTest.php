@@ -2,6 +2,11 @@
 
 namespace Brera\Queue\InMemory;
 
+use Brera\Queue\Stub\StubMessage;
+use Brera\Utils\Clearable;
+
+require_once __DIR__ . '/Stub/StubMessage.php';
+
 /**
  * @covers \Brera\Queue\InMemory\InMemoryQueue
  */
@@ -47,7 +52,7 @@ class InMemoryQueueTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($this->queue->isReadyForNext());
     }
 
-    public function testItShouldReturnTheNextEventFromTheQueue()
+    public function testItShouldReturnTheNextMessageFromTheQueue()
     {
         $stubSerializableData = $this->getMock(\Serializable::class);
         $stubSerializableData->expects($this->once())
@@ -74,6 +79,28 @@ class InMemoryQueueTest extends \PHPUnit_Framework_TestCase
         $this->setExpectedException(\RuntimeException::class);
         $this->queue->next();
     }
-    
-    /* TODO: test it should return the events in the correct order */
+
+    public function testItReturnsTheMessagesInTheRightOrder()
+    {
+        $this->queue->add(new StubMessage('One'));
+        $this->queue->add(new StubMessage('Two'));
+
+        $this->assertEquals('One', $this->queue->next()->serialize());
+        $this->assertEquals('Two', $this->queue->next()->serialize());
+    }
+
+    public function testItIsClearable()
+    {
+        $this->assertInstanceOf(Clearable::class, $this->queue);
+    }
+
+    public function testItClearsTheQueue()
+    {
+        $this->queue->add(new StubMessage('One'));
+        $this->queue->add(new StubMessage('Two'));
+        $this->queue->add(new StubMessage('Three'));
+        $this->assertCount(3, $this->queue);
+        $this->queue->clear();
+        $this->assertCount(0, $this->queue);
+    }
 }

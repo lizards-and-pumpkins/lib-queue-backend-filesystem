@@ -3,8 +3,11 @@
 
 namespace Brera\Queue\File;
 
+use Brera\Utils\Clearable;
+
 /**
- * @covers Brera\Queue\File\FileQueue
+ * @covers \Brera\Queue\File\FileQueue
+ * @uses   \Brera\Utils\LocalFilesystem
  */
 class FileQueueTest extends \PHPUnit_Framework_TestCase
 {
@@ -155,5 +158,19 @@ class FileQueueTest extends \PHPUnit_Framework_TestCase
         $this->assertFileExists($this->storagePath . '/test-file');
         $this->assertFileExists($this->storagePath . '/test-file_1');
         $this->assertFileExists($this->storagePath . '/test-file_2');
+    }
+
+    public function testItIsClearable()
+    {
+        $this->assertInstanceOf(Clearable::class, $this->fileQueue);
+    }
+
+    public function testItClearsTheQueue()
+    {
+        $this->fileQueue->add('one');
+        $this->fileQueue->add('two');
+        $this->assertCount(3, $this->fileQueue);
+        $this->fileQueue->clear();
+        $this->assertCount(0, $this->fileQueue);
     }
 }

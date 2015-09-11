@@ -4,8 +4,9 @@ namespace Brera\Queue\InMemory;
 
 use Brera\Queue\Queue;
 use Brera\Queue\NotSerializableException;
+use Brera\Utils\Clearable;
 
-class InMemoryQueue implements Queue
+class InMemoryQueue implements Queue, Clearable
 {
     /**
      * @var array
@@ -30,8 +31,6 @@ class InMemoryQueue implements Queue
 
     /**
      * @param mixed $data
-     * @throws NotSerializableException
-     * @return null
      */
     public function add($data)
     {
@@ -44,7 +43,6 @@ class InMemoryQueue implements Queue
 
     /**
      * @return mixed
-     * @throws \UnderflowException
      */
     public function next()
     {
@@ -55,5 +53,10 @@ class InMemoryQueue implements Queue
         $data = array_shift($this->queue);
 
         return unserialize($data);
+    }
+
+    public function clear()
+    {
+        $this->queue = [];
     }
 }

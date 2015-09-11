@@ -5,8 +5,10 @@ namespace Brera\Queue\File;
 
 use Brera\Queue\NotSerializableException;
 use Brera\Queue\Queue;
+use Brera\Utils\Clearable;
+use Brera\Utils\LocalFilesystem;
 
-class FileQueue implements Queue
+class FileQueue implements Queue, Clearable
 {
     /**
      * @var string
@@ -171,5 +173,10 @@ class FileQueue implements Queue
             $suffix = '_' . ++$count;
         }
         return $suffix;
+    }
+
+    public function clear()
+    {
+        (new LocalFilesystem())->removeDirectoryContents($this->storagePath);
     }
 }
