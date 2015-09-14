@@ -169,7 +169,7 @@ class FileQueueTest extends \PHPUnit_Framework_TestCase
     {
         $this->fileQueue->add('one');
         $this->fileQueue->add('two');
-        $this->assertCount(3, $this->fileQueue);
+        $this->assertCount(2, $this->fileQueue);
         $this->fileQueue->clear();
         $this->assertCount(0, $this->fileQueue);
     }
