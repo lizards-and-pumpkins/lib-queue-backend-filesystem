@@ -1,13 +1,13 @@
 <?php
 
+namespace LizardsAndPumpkins\Queue\File;
 
-namespace Brera\Queue\File;
-
-use Brera\Utils\Clearable;
+use LizardsAndPumpkins\Queue\NotSerializableException;
+use LizardsAndPumpkins\Utils\Clearable;
 
 /**
- * @covers \Brera\Queue\File\FileQueue
- * @uses   \Brera\Utils\LocalFilesystem
+ * @covers \LizardsAndPumpkins\Queue\File\FileQueue
+ * @uses   \LizardsAndPumpkins\Utils\LocalFilesystem
  */
 class FileQueueTest extends \PHPUnit_Framework_TestCase
 {
@@ -36,8 +36,8 @@ class FileQueueTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->storagePath = sys_get_temp_dir() . '/brera/test-queue/content';
-        $this->lockFilePath = sys_get_temp_dir() . '/brera/test-queue/lock/lockfile';
+        $this->storagePath = sys_get_temp_dir() . '/lizards-and-pumpkins/test-queue/content';
+        $this->lockFilePath = sys_get_temp_dir() . '/lizards-and-pumpkins/test-queue/lock/lockfile';
         $this->fileQueue = $this->createFileQueueInstance();
     }
 
@@ -121,7 +121,7 @@ class FileQueueTest extends \PHPUnit_Framework_TestCase
     public function testItThrowsNotSerializableException()
     {
         $simpleXml = simplexml_load_string('<root />');
-        $this->setExpectedException(\Brera\Queue\NotSerializableException::class);
+        $this->setExpectedException(NotSerializableException::class);
         $this->fileQueue->add($simpleXml);
     }
 

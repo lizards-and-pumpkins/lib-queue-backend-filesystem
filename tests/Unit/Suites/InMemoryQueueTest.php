@@ -1,14 +1,16 @@
 <?php
 
-namespace Brera\Queue\InMemory;
+namespace LizardsAndPumpkins\Queue\InMemory;
 
-use Brera\Queue\Stub\StubMessage;
-use Brera\Utils\Clearable;
+use LizardsAndPumpkins\Queue\Stub\StubMessage;
+use LizardsAndPumpkins\Utils\Clearable;
+use LizardsAndPumpkins\Queue\NotSerializableException;
 
 require_once __DIR__ . '/Stub/StubMessage.php';
 
+
 /**
- * @covers \Brera\Queue\InMemory\InMemoryQueue
+ * @covers \LizardsAndPumpkins\Queue\InMemory\InMemoryQueue
  */
 class InMemoryQueueTest extends \PHPUnit_Framework_TestCase
 {
@@ -22,19 +24,19 @@ class InMemoryQueueTest extends \PHPUnit_Framework_TestCase
         $this->queue = new InMemoryQueue();
     }
 
-    public function testItShouldInitiallyBeEmpty()
+    public function testQueueIsInitiallyEmpty()
     {
         $this->assertCount(0, $this->queue);
     }
 
-    public function testItShouldThrowNotSerializableException()
+    public function testExceptionIsThrownIfNonSerializableDataIsPassed()
     {
-        $this->setExpectedException(\Brera\Queue\NotSerializableException::class);
+        $this->setExpectedException(NotSerializableException::class);
         $simpleXml = simplexml_load_string('<root />');
         $this->queue->add($simpleXml);
     }
 
-    public function testItCanAddSerializableObjectToTheQueue()
+    public function testSerializableObjectCnBeAddedToQueue()
     {
         $stubSerializableData = $this->getMock(\Serializable::class);
         $this->queue->add($stubSerializableData);
@@ -51,30 +53,28 @@ class InMemoryQueueTest extends \PHPUnit_Framework_TestCase
         $this->queue->add('dummy');
         $this->assertTrue($this->queue->isReadyForNext());
     }
-
-    public function testItShouldReturnTheNextMessageFromTheQueue()
+    
+    public function testNextMessageIsReturned()
     {
         $stubSerializableData = $this->getMock(\Serializable::class);
-        $stubSerializableData->expects($this->once())
-            ->method('serialize')
-            ->willReturn(serialize(''));
+        $stubSerializableData->expects($this->once())->method('serialize')->willReturn(serialize(''));
         $this->queue->add($stubSerializableData);
         $result = $this->queue->next();
+
         $this->assertEquals($stubSerializableData, $result);
     }
 
-    public function testRetrievingTheMessageShouldRemoveItFromTheQueue()
+    public function testReturnedMessageIsRemovedFromQuue()
     {
         $stubSerializableData = $this->getMock(\Serializable::class);
-        $stubSerializableData->expects($this->once())
-                             ->method('serialize')
-                             ->willReturn(serialize(''));
+        $stubSerializableData->expects($this->once())->method('serialize')->willReturn(serialize(''));
         $this->queue->add($stubSerializableData);
         $this->queue->next();
+
         $this->assertCount(0, $this->queue);
     }
     
-    public function testItShouldThrowAnExceptionIfNextIsCalledOnAnEmptyQueue()
+    public function testExceptionIsThrownDuringAttemptToReceiveMessageFromEmptyQueue()
     {
         $this->setExpectedException(\RuntimeException::class);
         $this->queue->next();

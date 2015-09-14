@@ -1,12 +1,11 @@
 <?php
 
+namespace LizardsAndPumpkins\Queue\File;
 
-namespace Brera\Queue\File;
-
-use Brera\Queue\NotSerializableException;
-use Brera\Queue\Queue;
-use Brera\Utils\Clearable;
-use Brera\Utils\LocalFilesystem;
+use LizardsAndPumpkins\Queue\NotSerializableException;
+use LizardsAndPumpkins\Queue\Queue;
+use LizardsAndPumpkins\Utils\Clearable;
+use LizardsAndPumpkins\Utils\LocalFilesystem;
 
 class FileQueue implements Queue, Clearable
 {
@@ -59,7 +58,6 @@ class FileQueue implements Queue, Clearable
 
     /**
      * @param mixed $data
-     * @return void
      */
     public function add($data)
     {

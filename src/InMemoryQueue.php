@@ -1,15 +1,15 @@
 <?php
 
-namespace Brera\Queue\InMemory;
+namespace LizardsAndPumpkins\Queue\InMemory;
 
-use Brera\Queue\Queue;
-use Brera\Queue\NotSerializableException;
-use Brera\Utils\Clearable;
+use LizardsAndPumpkins\Queue\Queue;
+use LizardsAndPumpkins\Queue\NotSerializableException;
+use LizardsAndPumpkins\Utils\Clearable;
 
 class InMemoryQueue implements Queue, Clearable
 {
     /**
-     * @var array
+     * @var mixed[]
      */
     private $queue = [];
 

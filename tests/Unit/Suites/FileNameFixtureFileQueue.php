@@ -1,7 +1,6 @@
 <?php
 
-
-namespace Brera\Queue\File;
+namespace LizardsAndPumpkins\Queue\File;
 
 class FileNameFixtureFileQueue extends FileQueue
 {
