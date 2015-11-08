@@ -63,7 +63,7 @@ class FileQueue implements Queue, Clearable
     {
         $this->createStorageDirIfNotExists();
         $this->retrieveLock();
-        $filePath = $this->storagePath . '/' . $this->getFileNameForMessage();
+        $filePath = $this->storagePath . '/' . $this->getFileNameForMessage($data);
         $suffix = $this->getFileNameSuffix($filePath);
         file_put_contents($filePath . $suffix, $this->serialize($data));
         $this->releaseLock();
@@ -154,9 +154,24 @@ class FileQueue implements Queue, Clearable
     /**
      * @return string
      */
-    protected function getFileNameForMessage()
+    protected function getFileNameForMessage($data)
     {
-        return (string) microtime(true) * 10000;
+        $classNameSuffix = is_object($data) ?
+            '-' . $this->getBaseClassName(get_class($data)) :
+            '';
+        return ((string) microtime(true) * 10000) . $classNameSuffix;
+    }
+
+    /**
+     * @param string $className
+     * @return string
+     */
+    private function getBaseClassName($className)
+    {
+        $pos = strrpos($className, '\\');
+        return false !== $pos ?
+            substr($className, $pos +1) :
+            $className;
     }
 
     /**
