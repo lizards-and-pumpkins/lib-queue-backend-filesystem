@@ -25,7 +25,7 @@ class FileQueueTest extends \PHPUnit_Framework_TestCase
      * @var string
      */
     private $lockFilePath;
-    
+
     /**
      * @return FileQueue
      */
@@ -172,5 +172,16 @@ class FileQueueTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(2, $this->fileQueue);
         $this->fileQueue->clear();
         $this->assertCount(0, $this->fileQueue);
+    }
+
+    public function testItAddsTheClassNameToTheFileNameForObjectMessages()
+    {
+        $this->fileQueue->add($this);
+
+        $className = substr(__CLASS__, strrpos(__CLASS__, '\\') + 1);
+        $pattern = '*-' . $className;
+        $message = sprintf('The message queue did not contain a file matching the pattern /%s', $pattern);
+
+        $this->assertCount(1, glob($this->storagePath . '/' . $pattern), $message);
     }
 }
