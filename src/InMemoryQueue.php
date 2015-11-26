@@ -3,7 +3,7 @@
 namespace LizardsAndPumpkins\Queue\InMemory;
 
 use LizardsAndPumpkins\Queue\Queue;
-use LizardsAndPumpkins\Queue\NotSerializableException;
+use LizardsAndPumpkins\Queue\Exception\NotSerializableException;
 use LizardsAndPumpkins\Utils\Clearable;
 
 class InMemoryQueue implements Queue, Clearable

@@ -4,7 +4,7 @@ namespace LizardsAndPumpkins\Queue\InMemory;
 
 use LizardsAndPumpkins\Queue\Stub\StubMessage;
 use LizardsAndPumpkins\Utils\Clearable;
-use LizardsAndPumpkins\Queue\NotSerializableException;
+use LizardsAndPumpkins\Queue\Exception\NotSerializableException;
 
 require_once __DIR__ . '/Stub/StubMessage.php';
 

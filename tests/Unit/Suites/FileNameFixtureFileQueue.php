@@ -21,9 +21,10 @@ class FileNameFixtureFileQueue extends FileQueue
     }
 
     /**
+     * @param string $data
      * @return string
      */
-    protected function getFileNameForMessage()
+    protected function getFileNameForMessage($data)
     {
         return $this->messageFileName;
     }
