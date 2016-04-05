@@ -1,10 +1,4 @@
-Lizards and Pumpkins Queue Library
-===
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/lizards-and-pumpkins/lib-queue-filesystem/badges/quality-score.png?b=master&s=69ca82e2f1c3d1fd7652ba086b4549096ab2b729)](https://scrutinizer-ci.com/g/lizards-and-pumpkins/lib-queue-filesystem/?branch=master) [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/lizards-and-pumpkins/lib-queue-filesystem/badges/quality-score.png?b=master&s=69ca82e2f1c3d1fd7652ba086b4549096ab2b729)](https://scrutinizer-ci.com/g/lizards-and-pumpkins/lib-queue-filesystem/?branch=master) [![Build Status](https://scrutinizer-ci.com/g/lizards-and-pumpkins/lib-queue-filesystem/badges/build.png?b=master&s=23cb645240205be85ad3f8749bd7a578a591d428)](https://scrutinizer-ci.com/g/lizards-and-pumpkins/lib-queue-filesystem/build-status/master)
+# Lizards & Pumpkins Filesystem Queue Library
 
-A simple pipeline (worker) queue library.
-The contained classes all implement the `\LizardsAndPumpkins\Queue\Queue` interface.
-
-**Note:**  
-The `LizardsAndPumpkins\File\FileQueue` uses the PHP function `flock` for locking. That function is known to have issues when used on NFS mounts.
-Because of this, the file queue implementation will only work reliably if all processes reside on the same host and use
-the same local file system
+Please refer to [Fielsystem Queue section of Lizards & Pumpkins Wiki](https://github.com/lizards-and-pumpkins/catalog/wiki/Filesystem-Queue) for installation and usage instructions.

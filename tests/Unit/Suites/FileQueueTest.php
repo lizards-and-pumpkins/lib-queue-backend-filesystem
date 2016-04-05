@@ -1,13 +1,12 @@
 <?php
 
-namespace LizardsAndPumpkins\Queue\File;
+namespace LizardsAndPumpkins\Messaging\Queue\File;
 
-use LizardsAndPumpkins\Queue\Exception\NotSerializableException;
-use LizardsAndPumpkins\Utils\Clearable;
+use LizardsAndPumpkins\Messaging\Queue\Exception\NotSerializableException;
+use LizardsAndPumpkins\Util\Storage\Clearable;
 
 /**
- * @covers \LizardsAndPumpkins\Queue\File\FileQueue
- * @uses   \LizardsAndPumpkins\Utils\LocalFilesystem
+ * @covers \LizardsAndPumpkins\Messaging\Queue\File\FileQueue
  */
 class FileQueueTest extends \PHPUnit_Framework_TestCase
 {
@@ -83,7 +82,9 @@ class FileQueueTest extends \PHPUnit_Framework_TestCase
 
     public function testItThrowsAnExceptionWhenNextIsCalledOnEmptyQueue()
     {
-        $this->setExpectedException(\UnderflowException::class, 'Trying to get next message of an empty queue');
+        $this->expectException(\UnderflowException::class);
+        $this->expectExceptionMessage('Trying to get next message of an empty queue');
+        
         $this->fileQueue->next();
     }
 
@@ -121,7 +122,8 @@ class FileQueueTest extends \PHPUnit_Framework_TestCase
     public function testItThrowsNotSerializableException()
     {
         $simpleXml = simplexml_load_string('<root />');
-        $this->setExpectedException(NotSerializableException::class);
+        $this->expectException(NotSerializableException::class);
+        
         $this->fileQueue->add($simpleXml);
     }
 
@@ -150,7 +152,6 @@ class FileQueueTest extends \PHPUnit_Framework_TestCase
 
     public function testItWillAppendASuffixIfTheFileAlreadyExists()
     {
-        require_once 'FileNameFixtureFileQueue.php';
         $testFileQueue = new FileNameFixtureFileQueue($this->storagePath, $this->lockFilePath, 'test-file');
         $testFileQueue->add('message');
         $testFileQueue->add('message');
