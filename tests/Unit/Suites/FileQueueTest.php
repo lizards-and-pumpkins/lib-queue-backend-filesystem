@@ -2,7 +2,7 @@
 
 namespace LizardsAndPumpkins\Queue\File;
 
-use LizardsAndPumpkins\Queue\Exception\NotSerializableException;
+use LizardsAndPumpkins\Queue\NotSerializableException;
 use LizardsAndPumpkins\Utils\Clearable;
 
 /**
