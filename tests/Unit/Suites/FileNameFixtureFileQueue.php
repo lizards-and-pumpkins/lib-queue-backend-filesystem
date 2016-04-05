@@ -9,22 +9,13 @@ class FileNameFixtureFileQueue extends FileQueue
      */
     private $messageFileName;
 
-    /**
-     * @param string $storagePath
-     * @param string $lockFilePath
-     * @param string $messageFileName
-     */
-    final public function __construct($storagePath, $lockFilePath, $messageFileName)
+    final public function __construct(string $storagePath, string $lockFilePath, string $messageFileName)
     {
         parent::__construct($storagePath, $lockFilePath);
         $this->messageFileName = $messageFileName;
     }
 
-    /**
-     * @param string $data
-     * @return string
-     */
-    final protected function getFileNameForMessage($data)
+    final protected function getFileNameForMessage($data) : string
     {
         return $this->messageFileName;
     }
