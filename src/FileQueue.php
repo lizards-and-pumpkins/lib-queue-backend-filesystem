@@ -1,11 +1,11 @@
 <?php
 
-namespace LizardsAndPumpkins\Queue\File;
+namespace LizardsAndPumpkins\Messaging\Queue\File;
 
-use LizardsAndPumpkins\Queue\Exception\NotSerializableException;
-use LizardsAndPumpkins\Queue\Queue;
-use LizardsAndPumpkins\Utils\Clearable;
-use LizardsAndPumpkins\Utils\LocalFilesystem;
+use LizardsAndPumpkins\Messaging\Queue;
+use LizardsAndPumpkins\Messaging\Queue\Exception\NotSerializableException;
+use LizardsAndPumpkins\Util\FileSystem\LocalFilesystem;
+use LizardsAndPumpkins\Util\Storage\Clearable;
 
 class FileQueue implements Queue, Clearable
 {
@@ -152,6 +152,7 @@ class FileQueue implements Queue, Clearable
     }
 
     /**
+     * @param object|string $data
      * @return string
      */
     protected function getFileNameForMessage($data)

@@ -23,7 +23,7 @@
         "phpunit/phpunit": "5.3.*"
     },
     "autoload" : {
-        "psr-4": { "LizardsAndPumpkins\\Queue\\File\\": "src/" }
+        "psr-4": { "LizardsAndPumpkins\\Messaging\\Queue\\File\\": "src/" }
     },
     "repositories": [
         {

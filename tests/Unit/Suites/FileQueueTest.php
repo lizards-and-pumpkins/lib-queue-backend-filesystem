@@ -1,13 +1,12 @@
 <?php
 
-namespace LizardsAndPumpkins\Queue\File;
+namespace LizardsAndPumpkins\Messaging\Queue\File;
 
-use LizardsAndPumpkins\Queue\NotSerializableException;
-use LizardsAndPumpkins\Utils\Clearable;
+use LizardsAndPumpkins\Messaging\Queue\Exception\NotSerializableException;
+use LizardsAndPumpkins\Util\Storage\Clearable;
 
 /**
- * @covers \LizardsAndPumpkins\Queue\File\FileQueue
- * @uses   \LizardsAndPumpkins\Utils\LocalFilesystem
+ * @covers \LizardsAndPumpkins\Messaging\Queue\File\FileQueue
  */
 class FileQueueTest extends \PHPUnit_Framework_TestCase
 {

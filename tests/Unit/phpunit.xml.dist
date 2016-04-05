@@ -24,7 +24,7 @@
         beStrictAboutOutputDuringTests="true"
         verbose="false">
     <testsuite name="Lizards And Pumpkins Filesystem Queue Library Unit Tests">
-        <directory>.</directory>
+        <directory>Suites</directory>
     </testsuite>
     <filter>
         <whitelist>
