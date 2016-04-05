@@ -1,6 +1,6 @@
 {
     "name": "lizards-and-pumpkins/lib-queue",
-    "description": "Lizards & Pumpkins Queue Library",
+    "description": "Lizards & Pumpkins Filesystem Queue Library",
     "license": "BSD-3-Clause",
     "authors": [
         {
@@ -22,8 +22,11 @@
     "require-dev": {
         "phpunit/phpunit": "5.3.*"
     },
-    "autoload" : {
+    "autoload": {
         "psr-4": { "LizardsAndPumpkins\\Messaging\\Queue\\File\\": "src/" }
+    },
+    "autoload-dev": {
+        "psr-4": { "LizardsAndPumpkins\\Messaging\\Queue\\File\\": "tests/Unit/Suites" }
     },
     "repositories": [
         {

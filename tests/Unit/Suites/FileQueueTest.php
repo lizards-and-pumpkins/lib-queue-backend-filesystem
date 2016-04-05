@@ -152,7 +152,6 @@ class FileQueueTest extends \PHPUnit_Framework_TestCase
 
     public function testItWillAppendASuffixIfTheFileAlreadyExists()
     {
-        require_once 'FileNameFixtureFileQueue.php';
         $testFileQueue = new FileNameFixtureFileQueue($this->storagePath, $this->lockFilePath, 'test-file');
         $testFileQueue->add('message');
         $testFileQueue->add('message');
