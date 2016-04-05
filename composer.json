@@ -1,5 +1,5 @@
 {
-    "name": "lizards-and-pumpkins/lib-queue",
+    "name": "lizards-and-pumpkins/lib-queue-filesystem",
     "description": "Lizards & Pumpkins Filesystem Queue Library",
     "license": "BSD-3-Clause",
     "authors": [
