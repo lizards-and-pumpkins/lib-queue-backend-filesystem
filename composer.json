@@ -17,6 +17,7 @@
         }
     ],
     "require": {
+        "php": "7.0.*",
         "lizards-and-pumpkins/catalog": "0.3.0-alpha"
     },
     "require-dev": {
