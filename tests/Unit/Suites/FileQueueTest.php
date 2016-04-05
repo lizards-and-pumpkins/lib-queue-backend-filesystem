@@ -82,7 +82,9 @@ class FileQueueTest extends \PHPUnit_Framework_TestCase
 
     public function testItThrowsAnExceptionWhenNextIsCalledOnEmptyQueue()
     {
-        $this->setExpectedException(\UnderflowException::class, 'Trying to get next message of an empty queue');
+        $this->expectException(\UnderflowException::class);
+        $this->expectExceptionMessage('Trying to get next message of an empty queue');
+        
         $this->fileQueue->next();
     }
 
@@ -120,7 +122,8 @@ class FileQueueTest extends \PHPUnit_Framework_TestCase
     public function testItThrowsNotSerializableException()
     {
         $simpleXml = simplexml_load_string('<root />');
-        $this->setExpectedException(NotSerializableException::class);
+        $this->expectException(NotSerializableException::class);
+        
         $this->fileQueue->add($simpleXml);
     }
 
