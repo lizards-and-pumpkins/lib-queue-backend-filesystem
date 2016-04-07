@@ -24,7 +24,11 @@ class FileQueue implements Queue, Clearable
      */
     private $lock;
 
-    public function __construct(string $storagePath, string $lockFilePath)
+    /**
+     * @param string $storagePath
+     * @param string $lockFilePath
+     */
+    public function __construct($storagePath, $lockFilePath)
     {
         $this->storagePath = $storagePath;
         $this->lockFilePath = $lockFilePath;
@@ -35,17 +39,26 @@ class FileQueue implements Queue, Clearable
         $this->releaseLock();
     }
     
-    public function count() : int
+    /**
+     * @return int
+     */
+    public function count()
     {
         $this->createStorageDirIfNotExists();
         return count(scandir($this->storagePath)) -2;
     }
 
-    public function isReadyForNext() : bool
+    /**
+     * @return bool
+     */
+    public function isReadyForNext()
     {
         return $this->count() > 0;
     }
 
+    /**
+     * @param mixed $data
+     */
     public function add($data)
     {
         $this->createStorageDirIfNotExists();
@@ -56,6 +69,9 @@ class FileQueue implements Queue, Clearable
         $this->releaseLock();
     }
 
+    /**
+     * @return mixed
+     */
     public function next()
     {
         $this->createStorageDirIfNotExists();
@@ -106,7 +122,10 @@ class FileQueue implements Queue, Clearable
         }
     }
 
-    private function getNextFile() : string
+    /**
+     * @return string
+     */
+    private function getNextFile()
     {
         $files = scandir($this->storagePath);
         $i = 0;
@@ -119,7 +138,11 @@ class FileQueue implements Queue, Clearable
         return $this->storagePath . '/' . $files[$i];
     }
 
-    private function serialize($data) : string
+    /**
+     * @param mixed $data
+     * @return string
+     */
+    private function serialize($data)
     {
         try {
             return serialize($data);
@@ -128,7 +151,11 @@ class FileQueue implements Queue, Clearable
         }
     }
 
-    protected function getFileNameForMessage($data) : string
+    /**
+     * @param object|string $data
+     * @return string
+     */
+    protected function getFileNameForMessage($data)
     {
         $classNameSuffix = is_object($data) ?
             '-' . $this->getBaseClassName(get_class($data)) :
@@ -136,7 +163,11 @@ class FileQueue implements Queue, Clearable
         return ((string) microtime(true) * 10000) . $classNameSuffix;
     }
 
-    private function getBaseClassName(string $className) : string
+    /**
+     * @param string $className
+     * @return string
+     */
+    private function getBaseClassName($className)
     {
         $pos = strrpos($className, '\\');
         return false !== $pos ?
@@ -144,7 +175,11 @@ class FileQueue implements Queue, Clearable
             $className;
     }
 
-    private function getFileNameSuffix(string $filePath) : string
+    /**
+     * @param string $filePath
+     * @return string
+     */
+    private function getFileNameSuffix($filePath)
     {
         $suffix = '';
         $count = 0;
