@@ -1,9 +1,12 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace LizardsAndPumpkins\Messaging\Queue\File;
 
 use LizardsAndPumpkins\Messaging\Queue;
 use LizardsAndPumpkins\Messaging\Queue\Exception\NotSerializableException;
+use LizardsAndPumpkins\Messaging\Queue\Message;
 use LizardsAndPumpkins\Util\FileSystem\LocalFilesystem;
 use LizardsAndPumpkins\Util\Storage\Clearable;
 
@@ -39,48 +42,36 @@ class FileQueue implements Queue, Clearable
         $this->releaseLock();
     }
     
-    /**
-     * @return int
-     */
-    public function count()
+    public function count(): int
     {
         $this->createStorageDirIfNotExists();
         return count(scandir($this->storagePath)) -2;
     }
 
-    /**
-     * @return bool
-     */
-    public function isReadyForNext()
+    public function isReadyForNext(): bool
     {
         return $this->count() > 0;
     }
 
-    /**
-     * @param mixed $data
-     */
-    public function add($data)
+    public function add(Message $data)
     {
         $this->createStorageDirIfNotExists();
         $this->retrieveLock();
         $filePath = $this->storagePath . '/' . $this->getFileNameForMessage($data);
         $suffix = $this->getFileNameSuffix($filePath);
-        file_put_contents($filePath . $suffix, $this->serialize($data));
+        file_put_contents($filePath . $suffix, $data->serialize());
         $this->releaseLock();
     }
 
-    /**
-     * @return mixed
-     */
-    public function next()
+    public function next(): Message
     {
         $this->createStorageDirIfNotExists();
         $this->retrieveLock();
         $filePath = $this->getNextFile();
-        $data = unserialize(file_get_contents($filePath));
+        $data = file_get_contents($filePath);
         unlink($filePath);
         $this->releaseLock();
-        return $data;
+        return Message::rehydrate($data);
     }
 
     private function createStorageDirIfNotExists()
@@ -122,10 +113,7 @@ class FileQueue implements Queue, Clearable
         }
     }
 
-    /**
-     * @return string
-     */
-    private function getNextFile()
+    private function getNextFile(): string
     {
         $files = scandir($this->storagePath);
         $i = 0;
@@ -138,48 +126,12 @@ class FileQueue implements Queue, Clearable
         return $this->storagePath . '/' . $files[$i];
     }
 
-    /**
-     * @param mixed $data
-     * @return string
-     */
-    private function serialize($data)
+    protected function getFileNameForMessage(Message $data): string
     {
-        try {
-            return serialize($data);
-        } catch (\Exception $e) {
-            throw new NotSerializableException($e->getMessage());
-        }
+        return ((string) microtime(true) * 10000) . '-' . $data->getName();
     }
 
-    /**
-     * @param object|string $data
-     * @return string
-     */
-    protected function getFileNameForMessage($data)
-    {
-        $classNameSuffix = is_object($data) ?
-            '-' . $this->getBaseClassName(get_class($data)) :
-            '';
-        return ((string) microtime(true) * 10000) . $classNameSuffix;
-    }
-
-    /**
-     * @param string $className
-     * @return string
-     */
-    private function getBaseClassName($className)
-    {
-        $pos = strrpos($className, '\\');
-        return false !== $pos ?
-            substr($className, $pos +1) :
-            $className;
-    }
-
-    /**
-     * @param string $filePath
-     * @return string
-     */
-    private function getFileNameSuffix($filePath)
+    private function getFileNameSuffix(string $filePath): string
     {
         $suffix = '';
         $count = 0;
