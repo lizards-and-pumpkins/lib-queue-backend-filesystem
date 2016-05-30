@@ -1,10 +1,7 @@
 <?php
 
-declare(strict_types = 1);
-
 namespace LizardsAndPumpkins\Messaging\Queue\File;
 
-use LizardsAndPumpkins\Messaging\Queue\Exception\NotSerializableException;
 use LizardsAndPumpkins\Messaging\Queue\Message;
 use LizardsAndPumpkins\Util\Storage\Clearable;
 
@@ -36,7 +33,11 @@ class FileQueueTest extends \PHPUnit_Framework_TestCase
         return new FileQueue($this->storagePath, $this->lockFilePath);
     }
 
-    private function createTestMessage(string $name = 'dummy'): Message
+    /**
+     * @param string $name
+     * @return Message
+     */
+    private function createTestMessage($name = 'dummy')
     {
         return Message::withCurrentTime($name, '', []);
     }

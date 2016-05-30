@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types = 1);
-
 namespace LizardsAndPumpkins\Messaging\Queue\File;
 
 use LizardsAndPumpkins\Messaging\Queue;
@@ -41,14 +39,20 @@ class FileQueue implements Queue, Clearable
     {
         $this->releaseLock();
     }
-    
-    public function count(): int
+
+    /**
+     * @return int
+     */
+    public function count()
     {
         $this->createStorageDirIfNotExists();
         return count(scandir($this->storagePath)) -2;
     }
 
-    public function isReadyForNext(): bool
+    /**
+     * @return bool
+     */
+    public function isReadyForNext()
     {
         return $this->count() > 0;
     }
@@ -63,7 +67,10 @@ class FileQueue implements Queue, Clearable
         $this->releaseLock();
     }
 
-    public function next(): Message
+    /**
+     * @return Message
+     */
+    public function next()
     {
         $this->createStorageDirIfNotExists();
         $this->retrieveLock();
@@ -113,7 +120,10 @@ class FileQueue implements Queue, Clearable
         }
     }
 
-    private function getNextFile(): string
+    /**
+     * @return string
+     */
+    private function getNextFile()
     {
         $files = scandir($this->storagePath);
         $i = 0;
@@ -126,12 +136,20 @@ class FileQueue implements Queue, Clearable
         return $this->storagePath . '/' . $files[$i];
     }
 
-    protected function getFileNameForMessage(Message $data): string
+    /**
+     * @param Message $data
+     * @return string
+     */
+    protected function getFileNameForMessage(Message $data)
     {
         return ((string) microtime(true) * 10000) . '-' . $data->getName();
     }
 
-    private function getFileNameSuffix(string $filePath): string
+    /**
+     * @param string $filePath
+     * @return string
+     */
+    private function getFileNameSuffix($filePath)
     {
         $suffix = '';
         $count = 0;
