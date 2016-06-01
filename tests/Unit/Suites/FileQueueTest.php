@@ -2,7 +2,7 @@
 
 namespace LizardsAndPumpkins\Messaging\Queue\File;
 
-use LizardsAndPumpkins\Messaging\Queue\Exception\NotSerializableException;
+use LizardsAndPumpkins\Messaging\Queue\Message;
 use LizardsAndPumpkins\Util\Storage\Clearable;
 
 /**
@@ -31,6 +31,23 @@ class FileQueueTest extends \PHPUnit_Framework_TestCase
     private function createFileQueueInstance()
     {
         return new FileQueue($this->storagePath, $this->lockFilePath);
+    }
+
+    /**
+     * @return Message
+     */
+    private function createTestMessage()
+    {
+        return $this->createTestMessageWithName('dummy');
+    }
+
+    /**
+     * @param string $name
+     * @return Message
+     */
+    private function createTestMessageWithName($name)
+    {
+        return Message::withCurrentTime($name, '', []);
     }
 
     protected function setUp()
@@ -65,7 +82,7 @@ class FileQueueTest extends \PHPUnit_Framework_TestCase
 
     public function testItCountsOneAfterAddingOne()
     {
-        $this->fileQueue->add('dummy');
+        $this->fileQueue->add($this->createTestMessage());
         $this->assertSame(1, $this->fileQueue->count());
     }
 
@@ -76,7 +93,7 @@ class FileQueueTest extends \PHPUnit_Framework_TestCase
 
     public function testItIsReadyForNextWhenTheQueueIsNotEmpty()
     {
-        $this->fileQueue->add('dummy');
+        $this->fileQueue->add($this->createTestMessage());
         $this->assertTrue($this->fileQueue->isReadyForNext());
     }
 
@@ -90,16 +107,16 @@ class FileQueueTest extends \PHPUnit_Framework_TestCase
 
     public function testAddsOneReturnsOne()
     {
-        $value = 'test dummy';
-        $this->fileQueue->add($value);
-        $this->assertSame($value, $this->fileQueue->next());
+        $message = $this->createTestMessageWithName('foo bar');
+        $this->fileQueue->add($message);
+        $this->assertSame($message->getName(), $this->fileQueue->next()->getName());
     }
 
     public function testItDecrementsTheCountAfterCallingNext()
     {
-        $this->fileQueue->add('message');
-        $this->fileQueue->add('message');
-        $this->fileQueue->add('message');
+        $this->fileQueue->add($this->createTestMessage());
+        $this->fileQueue->add($this->createTestMessage());
+        $this->fileQueue->add($this->createTestMessage());
         $this->assertSame(3, $this->fileQueue->count());
         $this->fileQueue->next();
         $this->assertSame(2, $this->fileQueue->count());
@@ -111,28 +128,20 @@ class FileQueueTest extends \PHPUnit_Framework_TestCase
 
     public function testAddOneTwoReturnsOneTwo()
     {
-        $value1 = 'one';
-        $value2 = 'two';
-        $this->fileQueue->add($value1);
-        $this->fileQueue->add($value2);
-        $this->assertSame($value1, $this->fileQueue->next());
-        $this->assertSame($value2, $this->fileQueue->next());
-    }
-
-    public function testItThrowsNotSerializableException()
-    {
-        $simpleXml = simplexml_load_string('<root />');
-        $this->expectException(NotSerializableException::class);
-        
-        $this->fileQueue->add($simpleXml);
+        $message1 = $this->createTestMessageWithName('foo');
+        $message2 = $this->createTestMessageWithName('bar');
+        $this->fileQueue->add($message1);
+        $this->fileQueue->add($message2);
+        $this->assertSame($message1->getName(), $this->fileQueue->next()->getName());
+        $this->assertSame($message2->getName(), $this->fileQueue->next()->getName());
     }
 
     public function testAddOnOneInstanceRetrieveFromOtherInstance()
     {
-        $value = 'one';
-        $this->fileQueue->add($value);
+        $stubMessage = $this->createTestMessageWithName('foo');
+        $this->fileQueue->add($stubMessage);
         $otherInstance = $this->createFileQueueInstance();
-        $this->assertSame($value, $otherInstance->next());
+        $this->assertSame($stubMessage->getName(), $otherInstance->next()->getName());
     }
 
     public function testItReturnsManyMessagesInTheCorrectOrder()
@@ -142,20 +151,20 @@ class FileQueueTest extends \PHPUnit_Framework_TestCase
         $nMessages = 1000;
         for ($i = 0; $i < $nMessages; $i++) {
             $writeQueue = $i % 2 === 0 ? $instanceOne : $instanceTwo;
-            $writeQueue->add($i);
+            $writeQueue->add($this->createTestMessageWithName('message_' . $i));
         }
         for ($i = 0; $i < $nMessages; $i++) {
             $readQueue = $i % 2 === 1 ? $instanceOne : $instanceTwo;
-            $this->assertSame($i, $readQueue->next());
+            $this->assertSame('message_' . $i, $readQueue->next()->getName());
         }
     }
 
     public function testItWillAppendASuffixIfTheFileAlreadyExists()
     {
         $testFileQueue = new FileNameFixtureFileQueue($this->storagePath, $this->lockFilePath, 'test-file');
-        $testFileQueue->add('message');
-        $testFileQueue->add('message');
-        $testFileQueue->add('message');
+        $testFileQueue->add($this->createTestMessage());
+        $testFileQueue->add($this->createTestMessage());
+        $testFileQueue->add($this->createTestMessage());
         $this->assertFileExists($this->storagePath . '/test-file');
         $this->assertFileExists($this->storagePath . '/test-file_1');
         $this->assertFileExists($this->storagePath . '/test-file_2');
@@ -168,19 +177,19 @@ class FileQueueTest extends \PHPUnit_Framework_TestCase
 
     public function testItClearsTheQueue()
     {
-        $this->fileQueue->add('one');
-        $this->fileQueue->add('two');
+        $this->fileQueue->add($this->createTestMessage());
+        $this->fileQueue->add($this->createTestMessage());
         $this->assertCount(2, $this->fileQueue);
         $this->fileQueue->clear();
         $this->assertCount(0, $this->fileQueue);
     }
 
-    public function testItAddsTheClassNameToTheFileNameForObjectMessages()
+    public function testItAddsTheMessageNameToTheFileNameMessages()
     {
-        $this->fileQueue->add($this);
+        $stubMessage = $this->createTestMessageWithName('foo_bar');
+        $this->fileQueue->add($stubMessage);
 
-        $className = substr(__CLASS__, strrpos(__CLASS__, '\\') + 1);
-        $pattern = '*-' . $className;
+        $pattern = '*-' . $stubMessage->getName();
         $message = sprintf('The message queue did not contain a file matching the pattern /%s', $pattern);
 
         $this->assertCount(1, glob($this->storagePath . '/' . $pattern), $message);

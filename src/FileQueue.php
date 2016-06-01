@@ -3,7 +3,7 @@
 namespace LizardsAndPumpkins\Messaging\Queue\File;
 
 use LizardsAndPumpkins\Messaging\Queue;
-use LizardsAndPumpkins\Messaging\Queue\Exception\NotSerializableException;
+use LizardsAndPumpkins\Messaging\Queue\Message;
 use LizardsAndPumpkins\Util\FileSystem\LocalFilesystem;
 use LizardsAndPumpkins\Util\Storage\Clearable;
 
@@ -38,7 +38,7 @@ class FileQueue implements Queue, Clearable
     {
         $this->releaseLock();
     }
-    
+
     /**
      * @return int
      */
@@ -56,31 +56,28 @@ class FileQueue implements Queue, Clearable
         return $this->count() > 0;
     }
 
-    /**
-     * @param mixed $data
-     */
-    public function add($data)
+    public function add(Message $data)
     {
         $this->createStorageDirIfNotExists();
         $this->retrieveLock();
         $filePath = $this->storagePath . '/' . $this->getFileNameForMessage($data);
         $suffix = $this->getFileNameSuffix($filePath);
-        file_put_contents($filePath . $suffix, $this->serialize($data));
+        file_put_contents($filePath . $suffix, $data->serialize());
         $this->releaseLock();
     }
 
     /**
-     * @return mixed
+     * @return Message
      */
     public function next()
     {
         $this->createStorageDirIfNotExists();
         $this->retrieveLock();
         $filePath = $this->getNextFile();
-        $data = unserialize(file_get_contents($filePath));
+        $data = file_get_contents($filePath);
         unlink($filePath);
         $this->releaseLock();
-        return $data;
+        return Message::rehydrate($data);
     }
 
     private function createStorageDirIfNotExists()
@@ -139,40 +136,12 @@ class FileQueue implements Queue, Clearable
     }
 
     /**
-     * @param mixed $data
+     * @param Message $data
      * @return string
      */
-    private function serialize($data)
+    protected function getFileNameForMessage(Message $data)
     {
-        try {
-            return serialize($data);
-        } catch (\Exception $e) {
-            throw new NotSerializableException($e->getMessage());
-        }
-    }
-
-    /**
-     * @param object|string $data
-     * @return string
-     */
-    protected function getFileNameForMessage($data)
-    {
-        $classNameSuffix = is_object($data) ?
-            '-' . $this->getBaseClassName(get_class($data)) :
-            '';
-        return ((string) microtime(true) * 10000) . $classNameSuffix;
-    }
-
-    /**
-     * @param string $className
-     * @return string
-     */
-    private function getBaseClassName($className)
-    {
-        $pos = strrpos($className, '\\');
-        return false !== $pos ?
-            substr($className, $pos +1) :
-            $className;
+        return ((string) microtime(true) * 10000) . '-' . $data->getName();
     }
 
     /**

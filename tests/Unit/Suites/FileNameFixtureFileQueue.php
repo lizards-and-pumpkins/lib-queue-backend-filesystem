@@ -2,6 +2,8 @@
 
 namespace LizardsAndPumpkins\Messaging\Queue\File;
 
+use LizardsAndPumpkins\Messaging\Queue\Message;
+
 class FileNameFixtureFileQueue extends FileQueue
 {
     /**
@@ -21,10 +23,10 @@ class FileNameFixtureFileQueue extends FileQueue
     }
 
     /**
-     * @param string $data
+     * @param Message $data
      * @return string
      */
-    final protected function getFileNameForMessage($data)
+    final protected function getFileNameForMessage(Message $data)
     {
         return $this->messageFileName;
     }
