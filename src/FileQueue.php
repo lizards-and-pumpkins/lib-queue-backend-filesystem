@@ -3,7 +3,6 @@
 namespace LizardsAndPumpkins\Messaging\Queue\File;
 
 use LizardsAndPumpkins\Messaging\Queue;
-use LizardsAndPumpkins\Messaging\Queue\Exception\NotSerializableException;
 use LizardsAndPumpkins\Messaging\Queue\Message;
 use LizardsAndPumpkins\Util\FileSystem\LocalFilesystem;
 use LizardsAndPumpkins\Util\Storage\Clearable;
