@@ -34,10 +34,18 @@ class FileQueueTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @return Message
+     */
+    private function createTestMessage()
+    {
+        return $this->createTestMessageWithName('dummy');
+    }
+
+    /**
      * @param string $name
      * @return Message
      */
-    private function createTestMessage($name = 'dummy')
+    private function createTestMessageWithName($name)
     {
         return Message::withCurrentTime($name, '', []);
     }
@@ -99,7 +107,7 @@ class FileQueueTest extends \PHPUnit_Framework_TestCase
 
     public function testAddsOneReturnsOne()
     {
-        $message = $this->createTestMessage('foo bar');
+        $message = $this->createTestMessageWithName('foo bar');
         $this->fileQueue->add($message);
         $this->assertSame($message->getName(), $this->fileQueue->next()->getName());
     }
@@ -120,8 +128,8 @@ class FileQueueTest extends \PHPUnit_Framework_TestCase
 
     public function testAddOneTwoReturnsOneTwo()
     {
-        $message1 = $this->createTestMessage('foo');
-        $message2 = $this->createTestMessage('bar');
+        $message1 = $this->createTestMessageWithName('foo');
+        $message2 = $this->createTestMessageWithName('bar');
         $this->fileQueue->add($message1);
         $this->fileQueue->add($message2);
         $this->assertSame($message1->getName(), $this->fileQueue->next()->getName());
@@ -130,7 +138,7 @@ class FileQueueTest extends \PHPUnit_Framework_TestCase
 
     public function testAddOnOneInstanceRetrieveFromOtherInstance()
     {
-        $stubMessage = $this->createTestMessage('foo');
+        $stubMessage = $this->createTestMessageWithName('foo');
         $this->fileQueue->add($stubMessage);
         $otherInstance = $this->createFileQueueInstance();
         $this->assertSame($stubMessage->getName(), $otherInstance->next()->getName());
@@ -143,7 +151,7 @@ class FileQueueTest extends \PHPUnit_Framework_TestCase
         $nMessages = 1000;
         for ($i = 0; $i < $nMessages; $i++) {
             $writeQueue = $i % 2 === 0 ? $instanceOne : $instanceTwo;
-            $writeQueue->add($this->createTestMessage('message_' . $i));
+            $writeQueue->add($this->createTestMessageWithName('message_' . $i));
         }
         for ($i = 0; $i < $nMessages; $i++) {
             $readQueue = $i % 2 === 1 ? $instanceOne : $instanceTwo;
@@ -178,7 +186,7 @@ class FileQueueTest extends \PHPUnit_Framework_TestCase
 
     public function testItAddsTheMessageNameToTheFileNameMessages()
     {
-        $stubMessage = $this->createTestMessage('foo_bar');
+        $stubMessage = $this->createTestMessageWithName('foo_bar');
         $this->fileQueue->add($stubMessage);
 
         $pattern = '*-' . $stubMessage->getName();
