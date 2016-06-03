@@ -47,7 +47,7 @@ class FileQueueTest extends \PHPUnit_Framework_TestCase
      */
     private function createTestMessageWithName($name)
     {
-        return Message::withCurrentTime($name, '', []);
+        return Message::withCurrentTime($name, [], []);
     }
 
     protected function setUp()
