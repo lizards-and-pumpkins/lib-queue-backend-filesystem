@@ -2,6 +2,7 @@
 
 namespace LizardsAndPumpkins\Messaging\Queue\File;
 
+use LizardsAndPumpkins\Messaging\MessageReceiver;
 use LizardsAndPumpkins\Messaging\Queue;
 use LizardsAndPumpkins\Messaging\Queue\Message;
 use LizardsAndPumpkins\Util\FileSystem\LocalFilesystem;
@@ -48,14 +49,6 @@ class FileQueue implements Queue, Clearable
         return count(scandir($this->storagePath)) -2;
     }
 
-    /**
-     * @return bool
-     */
-    public function isReadyForNext()
-    {
-        return $this->count() > 0;
-    }
-
     public function add(Message $data)
     {
         $this->createStorageDirIfNotExists();
@@ -67,9 +60,20 @@ class FileQueue implements Queue, Clearable
     }
 
     /**
+     * @param MessageReceiver $messageReceiver
+     * @param int $maxNumberOfMessagesToConsume
+     */
+    public function consume(MessageReceiver $messageReceiver, $maxNumberOfMessagesToConsume)
+    {
+        while ($this->isReadyForNext() && $maxNumberOfMessagesToConsume-- > 0) {
+            $messageReceiver->receive($this->next());
+        }
+    }
+
+    /**
      * @return Message
      */
-    public function next()
+    private function next()
     {
         $this->createStorageDirIfNotExists();
         $this->retrieveLock();
@@ -78,6 +82,14 @@ class FileQueue implements Queue, Clearable
         unlink($filePath);
         $this->releaseLock();
         return Message::rehydrate($data);
+    }
+
+    /**
+     * @return bool
+     */
+    private function isReadyForNext()
+    {
+        return $this->count() > 0;
     }
 
     private function createStorageDirIfNotExists()
