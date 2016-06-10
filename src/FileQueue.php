@@ -141,9 +141,6 @@ class FileQueue implements Queue, Clearable
         while ($i < count($files) && in_array($files[$i], ['.', '..'], true)) {
             $i++;
         }
-        if ($i == count($files)) {
-            throw new \UnderflowException('Trying to get next message of an empty queue');
-        }
         return $this->storagePath . '/' . $files[$i];
     }
 
