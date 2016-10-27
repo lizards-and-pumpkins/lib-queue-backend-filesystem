@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LizardsAndPumpkins\Messaging\Queue\File;
 
 use LizardsAndPumpkins\Messaging\MessageReceiver;
@@ -31,40 +33,40 @@ class FileQueueTest extends \PHPUnit_Framework_TestCase
      */
     private $mockMessageReceiver;
 
-    /**
-     * @return FileQueue
-     */
-    private function createFileQueueInstance()
+    private function createFileQueueInstance() : FileQueue
     {
         return new FileQueue($this->storagePath, $this->lockFilePath);
     }
 
-    /**
-     * @return Message
-     */
-    private function createTestMessage()
+    private function createTestMessage() : Message
     {
         return $this->createTestMessageWithName('dummy');
     }
 
-    /**
-     * @param string $name
-     * @return Message
-     */
-    private function createTestMessageWithName($name)
+    private function createTestMessageWithName(string $name) : Message
     {
         return Message::withCurrentTime($name, [], []);
     }
 
-    /**
-     * @param string $name
-     * @return \PHPUnit_Framework_Constraint_Callback
-     */
-    private function isMessageWithName($name)
+    private function isMessageWithName(string $name) : \PHPUnit_Framework_Constraint_Callback
     {
         return $this->callback(function (Message $receivedMessage) use ($name) {
             return $name === $receivedMessage->getName();
         });
+    }
+
+    private function clearTestQueueStorage()
+    {
+        if (file_exists($this->storagePath)) {
+            $list = scandir($this->storagePath);
+            foreach ($list as $fileName) {
+                $file = $this->storagePath . '/' . $fileName;
+                if (is_file($file)) {
+                    unlink($file);
+                }
+            }
+            rmdir($this->storagePath);
+        }
     }
 
     protected function setUp()
@@ -85,18 +87,16 @@ class FileQueueTest extends \PHPUnit_Framework_TestCase
         $this->clearTestQueueStorage();
     }
 
-    private function clearTestQueueStorage()
+    public function testExceptionIsThrownIfStoragePathIsNotAString()
     {
-        if (file_exists($this->storagePath)) {
-            $list = scandir($this->storagePath);
-            foreach ($list as $fileName) {
-                $file = $this->storagePath . '/' . $fileName;
-                if (is_file($file)) {
-                    unlink($file);
-                }
-            }
-            rmdir($this->storagePath);
-        }
+        $this->expectException(\TypeError::class);
+        new FileQueue([], '');
+    }
+
+    public function testExceptionIsThrownIfLockFilePathIsNotAString()
+    {
+        $this->expectException(\TypeError::class);
+        new FileQueue('', []);
     }
 
     public function testItStartsEmpty()

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LizardsAndPumpkins\Messaging\Queue\File;
 
 use LizardsAndPumpkins\Messaging\MessageReceiver;
@@ -25,11 +27,7 @@ class FileQueue implements Queue, Clearable
      */
     private $lock;
 
-    /**
-     * @param string $storagePath
-     * @param string $lockFilePath
-     */
-    public function __construct($storagePath, $lockFilePath)
+    public function __construct(string $storagePath, string $lockFilePath)
     {
         $this->storagePath = $storagePath;
         $this->lockFilePath = $lockFilePath;
@@ -40,10 +38,7 @@ class FileQueue implements Queue, Clearable
         $this->releaseLock();
     }
 
-    /**
-     * @return int
-     */
-    public function count()
+    public function count() : int
     {
         $this->createStorageDirIfNotExists();
         return count(scandir($this->storagePath)) -2;
@@ -59,21 +54,14 @@ class FileQueue implements Queue, Clearable
         $this->releaseLock();
     }
 
-    /**
-     * @param MessageReceiver $messageReceiver
-     * @param int $maxNumberOfMessagesToConsume
-     */
-    public function consume(MessageReceiver $messageReceiver, $maxNumberOfMessagesToConsume)
+    public function consume(MessageReceiver $messageReceiver, int $maxNumberOfMessagesToConsume)
     {
         while ($this->isReadyForNext() && $maxNumberOfMessagesToConsume-- > 0) {
             $messageReceiver->receive($this->next());
         }
     }
 
-    /**
-     * @return Message
-     */
-    private function next()
+    private function next() : Message
     {
         $this->createStorageDirIfNotExists();
         $this->retrieveLock();
@@ -84,10 +72,7 @@ class FileQueue implements Queue, Clearable
         return Message::rehydrate($data);
     }
 
-    /**
-     * @return bool
-     */
-    private function isReadyForNext()
+    private function isReadyForNext() : bool
     {
         return $this->count() > 0;
     }
@@ -131,10 +116,7 @@ class FileQueue implements Queue, Clearable
         }
     }
 
-    /**
-     * @return string
-     */
-    private function getNextFile()
+    private function getNextFile() : string
     {
         $files = scandir($this->storagePath);
         $i = 0;
@@ -144,20 +126,12 @@ class FileQueue implements Queue, Clearable
         return $this->storagePath . '/' . $files[$i];
     }
 
-    /**
-     * @param Message $data
-     * @return string
-     */
-    protected function getFileNameForMessage(Message $data)
+    protected function getFileNameForMessage(Message $data) : string
     {
         return ((string) microtime(true) * 10000) . '-' . $data->getName();
     }
 
-    /**
-     * @param string $filePath
-     * @return string
-     */
-    private function getFileNameSuffix($filePath)
+    private function getFileNameSuffix(string $filePath) : string
     {
         $suffix = '';
         $count = 0;
