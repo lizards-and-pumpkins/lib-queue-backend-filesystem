@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LizardsAndPumpkins\Messaging\Queue\File;
 
 use LizardsAndPumpkins\Messaging\Queue\Message;
@@ -11,22 +13,13 @@ class FileNameFixtureFileQueue extends FileQueue
      */
     private $messageFileName;
 
-    /**
-     * @param string $storagePath
-     * @param string $lockFilePath
-     * @param string $messageFileName
-     */
-    final public function __construct($storagePath, $lockFilePath, $messageFileName)
+    final public function __construct(string $storagePath, string $lockFilePath, string $messageFileName)
     {
         parent::__construct($storagePath, $lockFilePath);
         $this->messageFileName = $messageFileName;
     }
 
-    /**
-     * @param Message $data
-     * @return string
-     */
-    final protected function getFileNameForMessage(Message $data)
+    final protected function getFileNameForMessage(Message $data) : string
     {
         return $this->messageFileName;
     }
