@@ -37,7 +37,7 @@ class FileQueueTest extends \PHPUnit_Framework_TestCase
     /**
      * @var bool
      */
-    private static $diskIsFull = false;
+    private static $diskIsFull;
 
     public static function isDiskFull() : bool
     {
@@ -82,6 +82,8 @@ class FileQueueTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
+        self::$diskIsFull = false;
+
         $this->storagePath = sys_get_temp_dir() . '/lizards-and-pumpkins/test-queue/content';
         $this->clearTestQueueStorage();
         $this->lockFilePath = sys_get_temp_dir() . '/lizards-and-pumpkins/test-queue/lock/lockfile';
