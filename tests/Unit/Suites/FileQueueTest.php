@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace LizardsAndPumpkins\Messaging\Queue\File;
 
 use LizardsAndPumpkins\Messaging\MessageReceiver;
+use LizardsAndPumpkins\Messaging\Queue\File\Exception\MessageCanNotBeStoredException;
 use LizardsAndPumpkins\Messaging\Queue\Message;
 use LizardsAndPumpkins\Util\Storage\Clearable;
 
@@ -32,6 +33,16 @@ class FileQueueTest extends \PHPUnit_Framework_TestCase
      * @var MessageReceiver|\PHPUnit_Framework_MockObject_MockObject
      */
     private $mockMessageReceiver;
+
+    /**
+     * @var bool
+     */
+    private static $diskIsFull = false;
+
+    public static function isDiskFull() : bool
+    {
+        return self::$diskIsFull;
+    }
 
     private function createFileQueueInstance() : FileQueue
     {
@@ -211,12 +222,35 @@ class FileQueueTest extends \PHPUnit_Framework_TestCase
 
     public function testItAddsTheMessageNameToTheFileNameMessages()
     {
-        $stubMessage = $this->createTestMessageWithName('foo_bar');
-        $this->fileQueue->add($stubMessage);
+        $testMessage = $this->createTestMessageWithName('foo_bar');
+        $this->fileQueue->add($testMessage);
 
-        $pattern = '*-' . $stubMessage->getName();
+        $pattern = '*-' . $testMessage->getName();
         $message = sprintf('The message queue did not contain a file matching the pattern /%s', $pattern);
 
         $this->assertCount(1, glob($this->storagePath . '/' . $pattern), $message);
     }
+
+    public function testExceptionIsThrownIfMessageCouldNotBeWritten()
+    {
+        self::$diskIsFull = true;
+        $this->expectException(MessageCanNotBeStoredException::class);
+        $this->fileQueue->add($this->createTestMessageWithName('foo_bar'));
+    }
+}
+
+/**
+ * @param string $filename
+ * @param mixed $data
+ * @param int $flags
+ * @param resource|null $context
+ * @return int|bool
+ */
+function file_put_contents(string $filename, $data, int $flags = 0, $context = null)
+{
+    if (FileQueueTest::isDiskFull()) {
+        return false;
+    }
+
+    return \file_put_contents($filename, $data, $flags, $context);
 }
