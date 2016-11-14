@@ -6,6 +6,7 @@ namespace LizardsAndPumpkins\Messaging\Queue\File;
 
 use LizardsAndPumpkins\Messaging\MessageReceiver;
 use LizardsAndPumpkins\Messaging\Queue;
+use LizardsAndPumpkins\Messaging\Queue\File\Exception\MessageCanNotBeStoredException;
 use LizardsAndPumpkins\Messaging\Queue\Message;
 use LizardsAndPumpkins\Util\FileSystem\LocalFilesystem;
 use LizardsAndPumpkins\Util\Storage\Clearable;
@@ -50,8 +51,14 @@ class FileQueue implements Queue, Clearable
         $this->retrieveLock();
         $filePath = $this->storagePath . '/' . $this->getFileNameForMessage($data);
         $suffix = $this->getFileNameSuffix($filePath);
-        file_put_contents($filePath . $suffix, $data->serialize());
+        $result = file_put_contents($filePath . $suffix, $data->serialize());
         $this->releaseLock();
+
+        if (false === $result) {
+            throw new MessageCanNotBeStoredException(
+                'Message can not be written into a queue. Disk full? Permissions are wrong?'
+            );
+        }
     }
 
     public function consume(MessageReceiver $messageReceiver, int $maxNumberOfMessagesToConsume)
