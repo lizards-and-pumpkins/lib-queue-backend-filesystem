@@ -63,13 +63,17 @@ class FileQueue implements Queue, Clearable
 
     public function consume(MessageReceiver $messageReceiver, int $maxNumberOfMessagesToConsume)
     {
-        do {
+        while ($maxNumberOfMessagesToConsume > 0) {
             $this->retrieveLock();
-            if ($this->isReadyForNext() && $maxNumberOfMessagesToConsume > 0) {
+            if ($this->isReadyForNext()) {
                 $messageReceiver->receive($this->next());
+                $this->releaseLock();
+                --$maxNumberOfMessagesToConsume;
+            } else {
+                $this->releaseLock();
+                usleep(250000);
             }
-            $this->releaseLock();
-        } while (--$maxNumberOfMessagesToConsume > 0);
+        }
     }
 
     private function next() : Message
