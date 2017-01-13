@@ -39,9 +39,24 @@ class FileQueueTest extends \PHPUnit_Framework_TestCase
      */
     private static $diskIsFull;
 
+    /**
+     * @var int
+     */
+    private static $usleepCallCount;
+
+    /**
+     * @var int
+     */
+    private $addTestMessageAtMicrotime = 0;
+
     public static function isDiskFull() : bool
     {
         return self::$diskIsFull;
+    }
+    
+    public static function recordUsleepCall()
+    {
+        self::$usleepCallCount++;
     }
 
     private function createFileQueueInstance() : FileQueue
@@ -80,8 +95,23 @@ class FileQueueTest extends \PHPUnit_Framework_TestCase
         }
     }
 
+    public function addTestMessageTickCallback()
+    {
+        if ($this->addTestMessageAtMicrotime > 0 && microtime(true) > $this->addTestMessageAtMicrotime) {
+            $this->fileQueue->add($this->createTestMessage());
+            $this->addTestMessageAtMicrotime = 0;
+        }
+    }
+
+    private function addTestMessageInSeconds($secs)
+    {
+        $this->addTestMessageAtMicrotime = microtime(true) + $secs;
+    }
+
     protected function setUp()
     {
+        declare(ticks=1);
+        register_tick_function([$this, 'addTestMessageTickCallback']);
         self::$diskIsFull = false;
 
         $this->storagePath = sys_get_temp_dir() . '/lizards-and-pumpkins/test-queue/content';
@@ -98,6 +128,7 @@ class FileQueueTest extends \PHPUnit_Framework_TestCase
             rmdir(dirname($this->lockFilePath));
         }
         $this->clearTestQueueStorage();
+        unregister_tick_function([$this, 'addTestMessageTickCallback']);
     }
 
     public function testExceptionIsThrownIfStoragePathIsNotAString()
@@ -239,6 +270,15 @@ class FileQueueTest extends \PHPUnit_Framework_TestCase
         $this->expectException(MessageCanNotBeStoredException::class);
         $this->fileQueue->add($this->createTestMessageWithName('foo_bar'));
     }
+
+    public function testSleepsBetweenPollsIfQueueIsEmpty()
+    {
+        $this->addTestMessageInSeconds(0.5);
+        
+        $this->fileQueue->consume($this->mockMessageReceiver, 1);
+        
+        $this->assertGreaterThan(0, self::$usleepCallCount);
+    }
 }
 
 /**
@@ -255,4 +295,9 @@ function file_put_contents(string $filename, $data, int $flags = 0, $context = n
     }
 
     return \file_put_contents($filename, $data, $flags, $context);
+}
+
+function usleep($time)
+{
+    FileQueueTest::recordUsleepCall();
 }
