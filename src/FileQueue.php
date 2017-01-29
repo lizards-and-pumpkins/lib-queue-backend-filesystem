@@ -66,8 +66,9 @@ class FileQueue implements Queue, Clearable
         while ($numberOfMessagesToConsume > 0) {
             $this->retrieveLock();
             if ($this->isReadyForNext()) {
-                $messageReceiver->receive($this->next());
+                $message = $this->next();
                 $this->releaseLock();
+                $messageReceiver->receive($message);
                 $numberOfMessagesToConsume--;
             } else {
                 $this->releaseLock();
