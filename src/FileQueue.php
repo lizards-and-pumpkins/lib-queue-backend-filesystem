@@ -8,6 +8,7 @@ use LizardsAndPumpkins\Messaging\MessageReceiver;
 use LizardsAndPumpkins\Messaging\Queue;
 use LizardsAndPumpkins\Messaging\Queue\File\Exception\MessageCanNotBeStoredException;
 use LizardsAndPumpkins\Messaging\Queue\Message;
+use LizardsAndPumpkins\Util\FileSystem\Exception\DirectoryDoesNotExistException;
 use LizardsAndPumpkins\Util\FileSystem\LocalFilesystem;
 use LizardsAndPumpkins\Util\Storage\Clearable;
 
@@ -39,10 +40,10 @@ class FileQueue implements Queue, Clearable
         $this->releaseLock();
     }
 
-    public function count() : int
+    public function count(): int
     {
         $this->createStorageDirIfNotExists();
-        return count(scandir($this->storagePath)) -2;
+        return count(scandir($this->storagePath)) - 2;
     }
 
     public function add(Message $data)
@@ -77,7 +78,7 @@ class FileQueue implements Queue, Clearable
         }
     }
 
-    private function next() : Message
+    private function next(): Message
     {
         $filePath = $this->getNextFile();
         $data = file_get_contents($filePath);
@@ -85,15 +86,18 @@ class FileQueue implements Queue, Clearable
         return Message::rehydrate($data);
     }
 
-    private function isReadyForNext() : bool
+    private function isReadyForNext(): bool
     {
         return $this->count() > 0;
     }
 
     private function createStorageDirIfNotExists()
     {
-        if (!file_exists($this->storagePath)) {
-            mkdir($this->storagePath, 0777, true);
+        if (is_dir($this->storagePath)) {
+            return;
+        }
+        if (@mkdir($this->storagePath, 0777, true) && !is_dir($this->storagePath)) {
+            throw new DirectoryDoesNotExistException('Storage directory %s could not be created.', $this->storagePath);
         }
     }
 
@@ -108,8 +112,11 @@ class FileQueue implements Queue, Clearable
     private function createLockFileDir()
     {
         $lockFileDir = dirname($this->lockFilePath);
-        if (!file_exists($lockFileDir)) {
-            mkdir($lockFileDir, 0777, true);
+        if (is_dir($lockFileDir)) {
+            return;
+        }
+        if (@mkdir($lockFileDir, 0777, true) && !is_dir($lockFileDir)) {
+            throw new DirectoryDoesNotExistException('Lock directory %s could not be created.', $lockFileDir);
         }
     }
 
@@ -129,7 +136,7 @@ class FileQueue implements Queue, Clearable
         }
     }
 
-    private function getNextFile() : string
+    private function getNextFile(): string
     {
         $files = scandir($this->storagePath);
         $i = 0;
@@ -139,12 +146,12 @@ class FileQueue implements Queue, Clearable
         return $this->storagePath . '/' . $files[$i];
     }
 
-    protected function getFileNameForMessage(Message $data) : string
+    protected function getFileNameForMessage(Message $data): string
     {
-        return ((string) microtime(true) * 10000) . '-' . $data->getName();
+        return ((string)microtime(true) * 10000) . '-' . $data->getName();
     }
 
-    private function getFileNameSuffix(string $filePath) : string
+    private function getFileNameSuffix(string $filePath): string
     {
         $suffix = '';
         $count = 0;
