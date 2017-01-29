@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace LizardsAndPumpkins\Messaging\Queue\File;
 
@@ -8,11 +8,12 @@ use LizardsAndPumpkins\Messaging\MessageReceiver;
 use LizardsAndPumpkins\Messaging\Queue\File\Exception\MessageCanNotBeStoredException;
 use LizardsAndPumpkins\Messaging\Queue\Message;
 use LizardsAndPumpkins\Util\Storage\Clearable;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @covers \LizardsAndPumpkins\Messaging\Queue\File\FileQueue
  */
-class FileQueueTest extends \PHPUnit_Framework_TestCase
+class FileQueueTest extends TestCase
 {
     /**
      * @var FileQueue
@@ -38,43 +39,38 @@ class FileQueueTest extends \PHPUnit_Framework_TestCase
      * @var bool
      */
     private static $diskIsFull;
-
-    /**
-     * @var int
-     */
-    private static $usleepCallCount;
-
+    
     /**
      * @var int
      */
     private $addTestMessageAtMicrotime = 0;
 
-    public static function isDiskFull() : bool
+    /**
+     * @var int[]
+     */
+    public static $flockingActions = [];
+
+    public static function isDiskFull(): bool
     {
         return self::$diskIsFull;
     }
     
-    public static function recordUsleepCall()
-    {
-        self::$usleepCallCount++;
-    }
-
-    private function createFileQueueInstance() : FileQueue
+    private function createFileQueueInstance(): FileQueue
     {
         return new FileQueue($this->storagePath, $this->lockFilePath);
     }
 
-    private function createTestMessage() : Message
+    private function createTestMessage(): Message
     {
         return $this->createTestMessageWithName('dummy');
     }
 
-    private function createTestMessageWithName(string $name) : Message
+    private function createTestMessageWithName(string $name): Message
     {
         return Message::withCurrentTime($name, [], []);
     }
 
-    private function isMessageWithName(string $name) : \PHPUnit_Framework_Constraint_Callback
+    private function isMessageWithName(string $name): \PHPUnit_Framework_Constraint_Callback
     {
         return $this->callback(function (Message $receivedMessage) use ($name) {
             return $name === $receivedMessage->getName();
@@ -110,9 +106,10 @@ class FileQueueTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        declare(ticks=1);
+        declare(ticks = 1);
         register_tick_function([$this, 'addTestMessageTickCallback']);
         self::$diskIsFull = false;
+        self::$flockingActions = [];
 
         $this->storagePath = sys_get_temp_dir() . '/lizards-and-pumpkins/test-queue/content';
         $this->clearTestQueueStorage();
@@ -219,6 +216,7 @@ class FileQueueTest extends \PHPUnit_Framework_TestCase
                     // Workaround https://github.com/sebastianbergmann/phpunit-mock-objects/issues/261
                     $expected = 'message_' . ($receiveCallCount - 2);
                 }
+
                 return $expected === $message->getName();
             }));
 
@@ -271,13 +269,24 @@ class FileQueueTest extends \PHPUnit_Framework_TestCase
         $this->fileQueue->add($this->createTestMessageWithName('foo_bar'));
     }
 
-    public function testSleepsBetweenPollsIfQueueIsEmpty()
+    public function testReleasesLockBeforeMessageConsumerIsCalled()
     {
-        $this->addTestMessageInSeconds(0.5);
+        $this->fileQueue->add($this->createTestMessage());
+        $this->fileQueue->consume(new class($this) implements MessageReceiver {
+            private $test;
+
+            public function __construct(TestCase $test)
+            {
+                $this->test = $test;
+            }
+            public function receive(Message $message)
+            {
+                $message = sprintf('Failing asserting that the flocking operations match the expected actions');
+                $lastLockingAction = end(FileQueueTest::$flockingActions);
+                $this->test->assertSame(\LOCK_UN, $lastLockingAction, $message);
+            }
+        }, 1);
         
-        $this->fileQueue->consume($this->mockMessageReceiver, 1);
-        
-        $this->assertGreaterThan(0, self::$usleepCallCount);
     }
 }
 
@@ -297,7 +306,8 @@ function file_put_contents(string $filename, $data, int $flags = 0, $context = n
     return \file_put_contents($filename, $data, $flags, $context);
 }
 
-function usleep($time)
+function flock($handle, int $operation, &$wouldblock = null)
 {
-    FileQueueTest::recordUsleepCall();
+    FileQueueTest::$flockingActions[] = $operation;
+    return \flock($handle, $operation, $wouldblock);
 }
