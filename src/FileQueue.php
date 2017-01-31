@@ -165,7 +165,7 @@ class FileQueue implements Queue, Clearable
             return;
         }
         if (@mkdir($directory, 0777, true) && !is_dir($directory)) {
-            throw new DirectoryDoesNotExistException('Directory %s could not be created.', $directory);
+            throw new DirectoryDoesNotExistException(sprintf('Directory %s could not be created.', $directory));
         }
     }
 }
