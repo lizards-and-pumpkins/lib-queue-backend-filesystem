@@ -110,11 +110,6 @@ class FileQueueTest extends TestCase
         }
     }
 
-    private function addTestMessageInSeconds($secs)
-    {
-        $this->addTestMessageAtMicrotime = microtime(true) + $secs;
-    }
-
     protected function setUp()
     {
         self::$createRaceConditionOnCreation = false;
@@ -302,7 +297,6 @@ class FileQueueTest extends TestCase
                 $this->test->assertSame(\LOCK_UN, $lastLockingAction, $message);
             }
         }, 1);
-
     }
 
     public function testCreateDirectoryInRaceConditionWhenAlreadyCreated()
@@ -344,11 +338,9 @@ function flock($handle, int $operation, &$wouldblock = null)
 
 function mkdir(string $path, int $chmod, bool $parent): bool
 {
-    if (FileQueueTest::$createRaceConditionOnCreation) {
-        if (!is_dir($path)) {
-            /** @noinspection MkdirRaceConditionInspection */
-            \mkdir($path, $chmod, $parent);
-        }
+    if (FileQueueTest::$createRaceConditionOnCreation && !is_dir($path)) {
+        /** @noinspection MkdirRaceConditionInspection */
+        \mkdir($path, $chmod, $parent);
     }
 
     if (FileQueueTest::$noDirectoryAfterMkdir) {
