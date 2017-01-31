@@ -93,12 +93,7 @@ class FileQueue implements Queue, Clearable
 
     private function createStorageDirIfNotExists()
     {
-        if (is_dir($this->storagePath)) {
-            return;
-        }
-        if (@mkdir($this->storagePath, 0777, true) && !is_dir($this->storagePath)) {
-            throw new DirectoryDoesNotExistException('Storage directory %s could not be created.', $this->storagePath);
-        }
+        $this->createDirectory($this->storagePath);
     }
 
     private function createLockFileIfNotExists()
@@ -111,13 +106,8 @@ class FileQueue implements Queue, Clearable
 
     private function createLockFileDir()
     {
-        $lockFileDir = dirname($this->lockFilePath);
-        if (is_dir($lockFileDir)) {
-            return;
-        }
-        if (@mkdir($lockFileDir, 0777, true) && !is_dir($lockFileDir)) {
-            throw new DirectoryDoesNotExistException('Lock directory %s could not be created.', $lockFileDir);
-        }
+        $directory = dirname($this->lockFilePath);
+        $this->createDirectory($directory);
     }
 
     private function retrieveLock()
@@ -164,5 +154,18 @@ class FileQueue implements Queue, Clearable
     public function clear()
     {
         (new LocalFilesystem())->removeDirectoryContents($this->storagePath);
+    }
+
+    /**
+     * @param $directory
+     */
+    private function createDirectory($directory)
+    {
+        if (is_dir($directory)) {
+            return;
+        }
+        if (@mkdir($directory, 0777, true) && !is_dir($directory)) {
+            throw new DirectoryDoesNotExistException('Directory %s could not be created.', $directory);
+        }
     }
 }
