@@ -100,11 +100,6 @@ class FileQueueTest extends TestCase
         }
     }
 
-    private function addTestMessageInSeconds($secs)
-    {
-        $this->addTestMessageAtMicrotime = microtime(true) + $secs;
-    }
-
     protected function setUp()
     {
         declare(ticks = 1);
