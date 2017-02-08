@@ -9,7 +9,7 @@ use LizardsAndPumpkins\Messaging\Queue\File\Exception\MessageCanNotBeStoredExcep
 use LizardsAndPumpkins\Messaging\Queue\Message;
 use LizardsAndPumpkins\Util\Storage\Clearable;
 use PHPUnit\Framework\TestCase;
-use PHPUnit\Framework\Constraint\Callback;
+// use PHPUnit\Framework\Constraint\Callback; Once PHPUnit 5.7 support is dropped
 
 /**
  * @covers \LizardsAndPumpkins\Messaging\Queue\File\FileQueue
@@ -71,7 +71,7 @@ class FileQueueTest extends TestCase
         return Message::withCurrentTime($name, [], []);
     }
 
-    private function isMessageWithName(string $name): Callback
+    private function isMessageWithName(string $name)//: Callback Once PHPUnit 5.7 support is dropped
     {
         return $this->callback(function (Message $receivedMessage) use ($name) {
             return $name === $receivedMessage->getName();
