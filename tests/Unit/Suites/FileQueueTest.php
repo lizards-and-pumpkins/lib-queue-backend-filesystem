@@ -1,12 +1,13 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace LizardsAndPumpkins\Messaging\Queue\File;
 
 use LizardsAndPumpkins\Messaging\MessageReceiver;
 use LizardsAndPumpkins\Messaging\Queue\File\Exception\MessageCanNotBeStoredException;
 use LizardsAndPumpkins\Messaging\Queue\Message;
+use LizardsAndPumpkins\Util\FileSystem\Exception\DirectoryDoesNotExistException;
 use LizardsAndPumpkins\Util\Storage\Clearable;
 use PHPUnit\Framework\TestCase;
 // use PHPUnit\Framework\Constraint\Callback; Once PHPUnit 5.7 support is dropped
@@ -40,7 +41,17 @@ class FileQueueTest extends TestCase
      * @var bool
      */
     private static $diskIsFull;
-    
+
+    /**
+     * @var bool
+     */
+    public static $createRaceConditionOnCreation;
+
+    /**
+     * @var bool
+     */
+    public static $noDirectoryAfterMkdir;
+
     /**
      * @var int
      */
@@ -55,7 +66,7 @@ class FileQueueTest extends TestCase
     {
         return self::$diskIsFull;
     }
-    
+
     private function createFileQueueInstance(): FileQueue
     {
         return new FileQueue($this->storagePath, $this->lockFilePath);
@@ -102,7 +113,10 @@ class FileQueueTest extends TestCase
 
     protected function setUp()
     {
-        declare(ticks = 1);
+        self::$createRaceConditionOnCreation = false;
+        self::$noDirectoryAfterMkdir = false;
+
+        declare(ticks=1);
         register_tick_function([$this, 'addTestMessageTickCallback']);
         self::$diskIsFull = false;
         self::$flockingActions = [];
@@ -268,13 +282,15 @@ class FileQueueTest extends TestCase
     public function testReleasesLockBeforeMessageConsumerIsCalled()
     {
         $this->fileQueue->add($this->createTestMessage());
-        $this->fileQueue->consume(new class($this) implements MessageReceiver {
+        $this->fileQueue->consume(new class($this) implements MessageReceiver
+        {
             private $test;
 
             public function __construct(TestCase $test)
             {
                 $this->test = $test;
             }
+
             public function receive(Message $message)
             {
                 $message = sprintf('Failing asserting that the flocking operations match the expected actions');
@@ -282,14 +298,27 @@ class FileQueueTest extends TestCase
                 $this->test->assertSame(\LOCK_UN, $lastLockingAction, $message);
             }
         }, 1);
-        
+    }
+
+    public function testCreateDirectoryInRaceConditionWhenAlreadyCreated()
+    {
+        self::$createRaceConditionOnCreation = true;
+        $this->fileQueue->add($this->createTestMessageWithName('foo_bar'));
+        $this->assertTrue(true); // test needs an assertion
+    }
+
+    public function testThrowsExceptionIfDirectoryWasNotCreated()
+    {
+        self::$noDirectoryAfterMkdir = true;
+        $this->expectException(DirectoryDoesNotExistException::class);
+        $this->fileQueue->add($this->createTestMessageWithName('foo_bar'));
     }
 }
 
 /**
- * @param string $filename
- * @param mixed $data
- * @param int $flags
+ * @param string        $filename
+ * @param mixed         $data
+ * @param int           $flags
  * @param resource|null $context
  * @return int|bool
  */
@@ -306,4 +335,20 @@ function flock($handle, int $operation, &$wouldblock = null)
 {
     FileQueueTest::$flockingActions[] = $operation;
     return \flock($handle, $operation, $wouldblock);
+}
+
+function mkdir(string $path, int $chmod, bool $parent): bool
+{
+    if (FileQueueTest::$createRaceConditionOnCreation && !is_dir($path)) {
+        /** @noinspection MkdirRaceConditionInspection */
+        \mkdir($path, $chmod, $parent);
+    }
+
+    if (FileQueueTest::$noDirectoryAfterMkdir) {
+        rmdir($path);
+        return true;
+    }
+
+    /** @noinspection MkdirRaceConditionInspection */
+    return \mkdir($path, $chmod, $parent);
 }
