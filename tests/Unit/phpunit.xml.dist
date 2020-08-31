@@ -1,27 +1,11 @@
 <?xml version="1.0"?>
 <phpunit
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:noNamespaceSchemaLocation="http://schema.phpunit.de/5.3/phpunit.xsd"
-        backupGlobals="false"
-        backupStaticAttributes="false"
-        cacheTokens="false"
+        xsi:noNamespaceSchemaLocation="http://schema.phpunit.de/9.2/phpunit.xsd"
         bootstrap="bootstrap.php"
         colors="true"
-        convertErrorsToExceptions="true"
-        convertNoticesToExceptions="true"
-        convertWarningsToExceptions="true"
         forceCoversAnnotation="true"
-        processIsolation="false"
-        stopOnError="false"
-        stopOnFailure="false"
-        stopOnIncomplete="false"
-        stopOnSkipped="false"
-        timeoutForSmallTests="1"
-        timeoutForMediumTests="10"
-        timeoutForLargeTests="60"
-        beStrictAboutTestsThatDoNotTestAnything="true"
-        beStrictAboutOutputDuringTests="true"
-        verbose="false">
+        beStrictAboutOutputDuringTests="true">
     <testsuite name="Lizards And Pumpkins Filesystem Queue Library Unit Tests">
         <directory>Suites</directory>
     </testsuite>

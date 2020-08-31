@@ -4,15 +4,14 @@ declare(strict_types=1);
 
 namespace LizardsAndPumpkins\Messaging\Queue\File;
 
-use LizardsAndPumpkins\Messaging\MessageReceiver;
-use LizardsAndPumpkins\Messaging\Queue;
 use LizardsAndPumpkins\Messaging\Queue\File\Exception\MessageCanNotBeStoredException;
 use LizardsAndPumpkins\Messaging\Queue\Message;
+use LizardsAndPumpkins\Messaging\Queue\MessageReceiver;
+use LizardsAndPumpkins\Messaging\Queue\Queue;
 use LizardsAndPumpkins\Util\FileSystem\Exception\DirectoryDoesNotExistException;
 use LizardsAndPumpkins\Util\FileSystem\LocalFilesystem;
-use LizardsAndPumpkins\Util\Storage\Clearable;
 
-class FileQueue implements Queue, Clearable
+class FileQueue implements Queue
 {
     /**
      * @var string
@@ -43,10 +42,11 @@ class FileQueue implements Queue, Clearable
     public function count(): int
     {
         $this->createStorageDirIfNotExists();
+
         return count(scandir($this->storagePath)) - 2;
     }
 
-    public function add(Message $data)
+    public function add(Message $data): void
     {
         $this->createStorageDirIfNotExists();
         $this->retrieveLock();
@@ -62,7 +62,7 @@ class FileQueue implements Queue, Clearable
         }
     }
 
-    public function consume(MessageReceiver $messageReceiver, int $numberOfMessagesToConsume)
+    public function consume(MessageReceiver $messageReceiver, int $numberOfMessagesToConsume): void
     {
         while ($numberOfMessagesToConsume > 0) {
             $this->retrieveLock();
@@ -83,6 +83,7 @@ class FileQueue implements Queue, Clearable
         $filePath = $this->getNextFile();
         $data = file_get_contents($filePath);
         unlink($filePath);
+
         return Message::rehydrate($data);
     }
 
@@ -91,33 +92,33 @@ class FileQueue implements Queue, Clearable
         return $this->count() > 0;
     }
 
-    private function createStorageDirIfNotExists()
+    private function createStorageDirIfNotExists(): void
     {
         $this->createDirectory($this->storagePath);
     }
 
-    private function createLockFileIfNotExists()
+    private function createLockFileIfNotExists(): void
     {
-        if (!file_exists($this->lockFilePath)) {
+        if (! file_exists($this->lockFilePath)) {
             $this->createLockFileDir();
             touch($this->lockFilePath);
         }
     }
 
-    private function createLockFileDir()
+    private function createLockFileDir(): void
     {
         $directory = dirname($this->lockFilePath);
         $this->createDirectory($directory);
     }
 
-    private function retrieveLock()
+    private function retrieveLock(): void
     {
         $this->createLockFileIfNotExists();
         $this->lock = fopen($this->lockFilePath, 'r+');
         flock($this->lock, LOCK_EX);
     }
 
-    private function releaseLock()
+    private function releaseLock(): void
     {
         if ($this->lock) {
             flock($this->lock, LOCK_UN);
@@ -131,14 +132,15 @@ class FileQueue implements Queue, Clearable
         $files = scandir($this->storagePath);
         $i = 0;
         while ($i < count($files) && in_array($files[$i], ['.', '..'], true)) {
-            $i++;
+            $i ++;
         }
+
         return $this->storagePath . '/' . $files[$i];
     }
 
     protected function getFileNameForMessage(Message $data): string
     {
-        return ((string)microtime(true) * 10000) . '-' . $data->getName();
+        return ((string) microtime(true) * 10000) . '-' . $data->getName();
     }
 
     private function getFileNameSuffix(string $filePath): string
@@ -146,8 +148,9 @@ class FileQueue implements Queue, Clearable
         $suffix = '';
         $count = 0;
         while (file_exists($filePath . $suffix)) {
-            $suffix = '_' . ++$count;
+            $suffix = '_' . ++ $count;
         }
+
         return $suffix;
     }
 
@@ -164,7 +167,7 @@ class FileQueue implements Queue, Clearable
         if (is_dir($directory)) {
             return;
         }
-        if (@mkdir($directory, 0777, true) && !is_dir($directory)) {
+        if (@mkdir($directory, 0777, true) && ! is_dir($directory)) {
             throw new DirectoryDoesNotExistException(sprintf('Directory %s could not be created.', $directory));
         }
     }
