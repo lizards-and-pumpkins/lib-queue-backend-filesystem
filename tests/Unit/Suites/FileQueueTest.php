@@ -8,7 +8,7 @@ use LizardsAndPumpkins\Messaging\Queue\File\Exception\MessageCanNotBeStoredExcep
 use LizardsAndPumpkins\Messaging\Queue\Message;
 use LizardsAndPumpkins\Messaging\Queue\MessageReceiver;
 use LizardsAndPumpkins\Util\FileSystem\Exception\DirectoryDoesNotExistException;
-use LizardsAndPumpkins\Util\Storage\Clearable;
+use PHPUnit\Framework\Constraint\Callback;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -81,7 +81,7 @@ class FileQueueTest extends TestCase
         return Message::withCurrentTime($name, [], []);
     }
 
-    private function isMessageWithName(string $name)//: Callback Once PHPUnit 5.7 support is dropped
+    private function isMessageWithName(string $name): Callback
     {
         return $this->callback(function (Message $receivedMessage) use ($name) {
             return $name === $receivedMessage->getName();
