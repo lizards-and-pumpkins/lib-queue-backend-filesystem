@@ -212,7 +212,7 @@ class FileQueueTest extends TestCase
         $instanceOne = $this->fileQueue;
         $instanceTwo = $this->createFileQueueInstance();
         $nMessages = 1000;
-        for ($i = 0; $i < $nMessages; $i ++) {
+        for ($i = 0; $i < $nMessages; $i++) {
             $writeQueue = $i % 2 === 0 ? $instanceOne : $instanceTwo;
             $writeQueue->add($this->createTestMessageWithName('message_' . $i));
         }
@@ -220,7 +220,7 @@ class FileQueueTest extends TestCase
         $receiveCallCount = 0;
         $this->mockMessageReceiver->expects($this->exactly($nMessages))->method('receive')
             ->with($this->callback(function (Message $message) use (&$receiveCallCount, $nMessages) {
-                $expected = 'message_' . $receiveCallCount ++;
+                $expected = 'message_' . $receiveCallCount++;
                 if ($receiveCallCount > $nMessages) {
                     // Workaround https://github.com/sebastianbergmann/phpunit-mock-objects/issues/261
                     $expected = 'message_' . ($receiveCallCount - 2);
@@ -229,7 +229,7 @@ class FileQueueTest extends TestCase
                 return $expected === $message->getName();
             }));
 
-        for ($i = 0; $i < $nMessages; $i ++) {
+        for ($i = 0; $i < $nMessages; $i++) {
             $readQueue = $i % 2 === 1 ? $instanceOne : $instanceTwo;
             $readQueue->consume($this->mockMessageReceiver, 1);
         }
