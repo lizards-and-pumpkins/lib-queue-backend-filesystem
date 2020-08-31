@@ -132,7 +132,7 @@ class FileQueue implements Queue
         $files = scandir($this->storagePath);
         $i = 0;
         while ($i < count($files) && in_array($files[$i], ['.', '..'], true)) {
-            $i ++;
+            $i++;
         }
 
         return $this->storagePath . '/' . $files[$i];
@@ -148,7 +148,7 @@ class FileQueue implements Queue
         $suffix = '';
         $count = 0;
         while (file_exists($filePath . $suffix)) {
-            $suffix = '_' . ++ $count;
+            $suffix = '_' . ++$count;
         }
 
         return $suffix;
