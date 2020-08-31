@@ -1,4 +1,4 @@
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/lizards-and-pumpkins/lib-queue-backend-filesystem/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/lizards-and-pumpkins/lib-queue-backend-filesystem/?branch=master) [![Code Coverage](https://scrutinizer-ci.com/g/lizards-and-pumpkins/lib-queue-backend-filesystem/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/lizards-and-pumpkins/lib-queue-backend-filesystem/?branch=master) [![Build Status](https://scrutinizer-ci.com/g/lizards-and-pumpkins/lib-queue-backend-filesystem/badges/build.png?b=master)](https://scrutinizer-ci.com/g/lizards-and-pumpkins/lib-queue-backend-filesystem/build-status/master)
 # Lizards & Pumpkins Filesystem Queue Library
 
-Please refer to [Filesystem Queue section of Lizards & Pumpkins Wiki](https://github.com/lizards-and-pumpkins/catalog/wiki/Filesystem-Queue) for installation and usage instructions.
+Please refer to [Dev Docs](http://lizardsandpumpkins.com/dev-docs/queue/filesystem/) for installation and usage instructions.

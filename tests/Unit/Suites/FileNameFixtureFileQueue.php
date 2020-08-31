@@ -19,7 +19,7 @@ class FileNameFixtureFileQueue extends FileQueue
         $this->messageFileName = $messageFileName;
     }
 
-    final protected function getFileNameForMessage(Message $data) : string
+    final protected function getFileNameForMessage(Message $data): string
     {
         return $this->messageFileName;
     }

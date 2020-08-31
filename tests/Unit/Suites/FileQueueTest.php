@@ -4,13 +4,12 @@ declare(strict_types=1);
 
 namespace LizardsAndPumpkins\Messaging\Queue\File;
 
-use LizardsAndPumpkins\Messaging\MessageReceiver;
 use LizardsAndPumpkins\Messaging\Queue\File\Exception\MessageCanNotBeStoredException;
 use LizardsAndPumpkins\Messaging\Queue\Message;
+use LizardsAndPumpkins\Messaging\Queue\MessageReceiver;
 use LizardsAndPumpkins\Util\FileSystem\Exception\DirectoryDoesNotExistException;
-use LizardsAndPumpkins\Util\Storage\Clearable;
+use PHPUnit\Framework\Constraint\Callback;
 use PHPUnit\Framework\TestCase;
-// use PHPUnit\Framework\Constraint\Callback; Once PHPUnit 5.7 support is dropped
 
 /**
  * @covers \LizardsAndPumpkins\Messaging\Queue\File\FileQueue
@@ -33,7 +32,7 @@ class FileQueueTest extends TestCase
     private $lockFilePath;
 
     /**
-     * @var MessageReceiver|\PHPUnit_Framework_MockObject_MockObject
+     * @var MessageReceiver
      */
     private $mockMessageReceiver;
 
@@ -82,14 +81,14 @@ class FileQueueTest extends TestCase
         return Message::withCurrentTime($name, [], []);
     }
 
-    private function isMessageWithName(string $name)//: Callback Once PHPUnit 5.7 support is dropped
+    private function isMessageWithName(string $name): Callback
     {
         return $this->callback(function (Message $receivedMessage) use ($name) {
             return $name === $receivedMessage->getName();
         });
     }
 
-    private function clearTestQueueStorage()
+    private function clearTestQueueStorage(): void
     {
         if (file_exists($this->storagePath)) {
             $list = scandir($this->storagePath);
@@ -103,7 +102,7 @@ class FileQueueTest extends TestCase
         }
     }
 
-    public function addTestMessageTickCallback()
+    public function addTestMessageTickCallback(): void
     {
         if ($this->addTestMessageAtMicrotime > 0 && microtime(true) > $this->addTestMessageAtMicrotime) {
             $this->fileQueue->add($this->createTestMessage());
@@ -111,7 +110,7 @@ class FileQueueTest extends TestCase
         }
     }
 
-    protected function setUp()
+    final protected function setUp(): void
     {
         self::$createRaceConditionOnCreation = false;
         self::$noDirectoryAfterMkdir = false;
@@ -128,7 +127,7 @@ class FileQueueTest extends TestCase
         $this->mockMessageReceiver = $this->createMock(MessageReceiver::class);
     }
 
-    protected function tearDown()
+    final protected function tearDown(): void
     {
         if (file_exists($this->lockFilePath)) {
             unlink($this->lockFilePath);
@@ -138,30 +137,30 @@ class FileQueueTest extends TestCase
         unregister_tick_function([$this, 'addTestMessageTickCallback']);
     }
 
-    public function testExceptionIsThrownIfStoragePathIsNotAString()
+    public function testExceptionIsThrownIfStoragePathIsNotAString(): void
     {
         $this->expectException(\TypeError::class);
         new FileQueue([], '');
     }
 
-    public function testExceptionIsThrownIfLockFilePathIsNotAString()
+    public function testExceptionIsThrownIfLockFilePathIsNotAString(): void
     {
         $this->expectException(\TypeError::class);
         new FileQueue('', []);
     }
 
-    public function testItStartsEmpty()
+    public function testItStartsEmpty(): void
     {
         $this->assertSame(0, $this->fileQueue->count());
     }
 
-    public function testItCountsOneAfterAddingOne()
+    public function testItCountsOneAfterAddingOne(): void
     {
         $this->fileQueue->add($this->createTestMessage());
         $this->assertSame(1, $this->fileQueue->count());
     }
 
-    public function testAddsOneReturnsOne()
+    public function testAddsOneReturnsOne(): void
     {
         $sourceMessage = $this->createTestMessageWithName('foo bar');
         $this->fileQueue->add($sourceMessage);
@@ -170,7 +169,7 @@ class FileQueueTest extends TestCase
         $this->fileQueue->consume($this->mockMessageReceiver, 1);
     }
 
-    public function testItDecrementsTheCountAfterCallingNext()
+    public function testItDecrementsTheCountAfterCallingNext(): void
     {
         $this->fileQueue->add($this->createTestMessage());
         $this->fileQueue->add($this->createTestMessage());
@@ -184,7 +183,7 @@ class FileQueueTest extends TestCase
         $this->assertSame(0, $this->fileQueue->count());
     }
 
-    public function testAddOneTwoReturnsOneTwo()
+    public function testAddOneTwoReturnsOneTwo(): void
     {
         $message1 = $this->createTestMessageWithName('foo');
         $message2 = $this->createTestMessageWithName('bar');
@@ -198,7 +197,7 @@ class FileQueueTest extends TestCase
         $this->fileQueue->consume($this->mockMessageReceiver, 2);
     }
 
-    public function testAddOnOneInstanceRetrieveFromOtherInstance()
+    public function testAddOnOneInstanceRetrieveFromOtherInstance(): void
     {
         $testMessage = $this->createTestMessageWithName('foo');
         $this->fileQueue->add($testMessage);
@@ -208,7 +207,7 @@ class FileQueueTest extends TestCase
         $otherInstance->consume($this->mockMessageReceiver, 1);
     }
 
-    public function testItReturnsManyMessagesInTheCorrectOrder()
+    public function testItReturnsManyMessagesInTheCorrectOrder(): void
     {
         $instanceOne = $this->fileQueue;
         $instanceTwo = $this->createFileQueueInstance();
@@ -236,7 +235,7 @@ class FileQueueTest extends TestCase
         }
     }
 
-    public function testItWillAppendASuffixIfTheFileAlreadyExists()
+    public function testItWillAppendASuffixIfTheFileAlreadyExists(): void
     {
         $testFileQueue = new FileNameFixtureFileQueue($this->storagePath, $this->lockFilePath, 'test-file');
         $testFileQueue->add($this->createTestMessage());
@@ -247,12 +246,7 @@ class FileQueueTest extends TestCase
         $this->assertFileExists($this->storagePath . '/test-file_2');
     }
 
-    public function testItIsClearable()
-    {
-        $this->assertInstanceOf(Clearable::class, $this->fileQueue);
-    }
-
-    public function testItClearsTheQueue()
+    public function testItClearsTheQueue(): void
     {
         $this->fileQueue->add($this->createTestMessage());
         $this->fileQueue->add($this->createTestMessage());
@@ -261,7 +255,7 @@ class FileQueueTest extends TestCase
         $this->assertCount(0, $this->fileQueue);
     }
 
-    public function testItAddsTheMessageNameToTheFileNameMessages()
+    public function testItAddsTheMessageNameToTheFileNameMessages(): void
     {
         $testMessage = $this->createTestMessageWithName('foo_bar');
         $this->fileQueue->add($testMessage);
@@ -272,18 +266,17 @@ class FileQueueTest extends TestCase
         $this->assertCount(1, glob($this->storagePath . '/' . $pattern), $message);
     }
 
-    public function testExceptionIsThrownIfMessageCouldNotBeWritten()
+    public function testExceptionIsThrownIfMessageCouldNotBeWritten(): void
     {
         self::$diskIsFull = true;
         $this->expectException(MessageCanNotBeStoredException::class);
         $this->fileQueue->add($this->createTestMessageWithName('foo_bar'));
     }
 
-    public function testReleasesLockBeforeMessageConsumerIsCalled()
+    public function testReleasesLockBeforeMessageConsumerIsCalled(): void
     {
         $this->fileQueue->add($this->createTestMessage());
-        $this->fileQueue->consume(new class($this) implements MessageReceiver
-        {
+        $this->fileQueue->consume(new class($this) implements MessageReceiver {
             private $test;
 
             public function __construct(TestCase $test)
@@ -291,7 +284,7 @@ class FileQueueTest extends TestCase
                 $this->test = $test;
             }
 
-            public function receive(Message $message)
+            public function receive(Message $message): void
             {
                 $message = sprintf('Failing asserting that the flocking operations match the expected actions');
                 $lastLockingAction = end(FileQueueTest::$flockingActions);
@@ -300,14 +293,14 @@ class FileQueueTest extends TestCase
         }, 1);
     }
 
-    public function testCreateDirectoryInRaceConditionWhenAlreadyCreated()
+    public function testCreateDirectoryInRaceConditionWhenAlreadyCreated(): void
     {
         self::$createRaceConditionOnCreation = true;
         $this->fileQueue->add($this->createTestMessageWithName('foo_bar'));
         $this->assertTrue(true); // test needs an assertion
     }
 
-    public function testThrowsExceptionIfDirectoryWasNotCreated()
+    public function testThrowsExceptionIfDirectoryWasNotCreated(): void
     {
         self::$noDirectoryAfterMkdir = true;
         $this->expectException(DirectoryDoesNotExistException::class);
@@ -316,9 +309,9 @@ class FileQueueTest extends TestCase
 }
 
 /**
- * @param string        $filename
- * @param mixed         $data
- * @param int           $flags
+ * @param string $filename
+ * @param mixed $data
+ * @param int $flags
  * @param resource|null $context
  * @return int|bool
  */
@@ -331,21 +324,23 @@ function file_put_contents(string $filename, $data, int $flags = 0, $context = n
     return \file_put_contents($filename, $data, $flags, $context);
 }
 
-function flock($handle, int $operation, &$wouldblock = null)
+function flock($handle, int $operation, &$wouldblock = null): bool
 {
     FileQueueTest::$flockingActions[] = $operation;
+
     return \flock($handle, $operation, $wouldblock);
 }
 
 function mkdir(string $path, int $chmod, bool $parent): bool
 {
-    if (FileQueueTest::$createRaceConditionOnCreation && !is_dir($path)) {
+    if (FileQueueTest::$createRaceConditionOnCreation && ! is_dir($path)) {
         /** @noinspection MkdirRaceConditionInspection */
         \mkdir($path, $chmod, $parent);
     }
 
     if (FileQueueTest::$noDirectoryAfterMkdir) {
         rmdir($path);
+
         return true;
     }
 
