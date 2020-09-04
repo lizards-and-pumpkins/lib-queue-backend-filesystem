@@ -154,7 +154,7 @@ class FileQueue implements Queue
         return $suffix;
     }
 
-    public function clear()
+    public function clear(): void
     {
         (new LocalFilesystem())->removeDirectoryContents($this->storagePath);
     }
